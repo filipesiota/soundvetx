@@ -1,169 +1,400 @@
-export default function Home() {
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { FormSection } from "@/components/form-section";
+import { FormGrid } from "@/components/form-grid";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MainTitle } from "@/components/main-title";
+import { toast } from "sonner";
+import { CheckboxItem } from "@/components/checkbox-item";
+import React from "react";
+import { CheckboxOption } from "@/components/checkbox-item";
+import { Textarea } from "@/components/ui/textarea";
+
+const softTissues: CheckboxOption[] = [
+	{ id: "chest", label: "Tórax" },
+	{ id: "abdomen", label: "Abdômen" }
+];
+
+const skullItems: CheckboxOption[] = [
+	{ id: "mandible", label: "Mandíbula" },
+	{ id: "jaw", label: "Maxilar" },
+	{ id: "tympanicBullae", label: "Bulas Timpânicas" }
+];
+
+const axialSkeletonItems: CheckboxOption[] = [
+	{ id: "cervical", label: "Coluna Cervical" },
+	{ id: "thoracic", label: "Coluna Torácica" },
+	{ id: "lumbar", label: "Coluna Lombar" },
+	{ id: "cervicothoracic", label: "Cervico Torácica" },
+	{ id: "thoracolumbar", label: "Tóraco-lombar" },
+	{ id: "lumbosacral", label: "Lombossacral" },
+	{ id: "tail", label: "Cauda" }
+];
+
+const appendicularSkeletonItems: CheckboxOption[] = [
+	{ id: "rightThoracicLimb", label: "Membro Torácico Direito" },
+	{ id: "leftThoracicLimb", label: "Membro Torácico Esquerdo" },
+	{ id: "rightPelvicLimb", label: "Membro Pélvico Direito" },
+	{ id: "leftPelvicLimb", label: "Membro Pélvico Esquerdo" },
+	{ id: "postTraumaPelvis", label: 'Pelve "Pós-Trauma"' },
+	{ id: "dysplasiaControlPelvis", label: 'Pelve "Controle Displasia"' }
+];
+
+const combos: CheckboxOption[] = [
+	{ id: "preSurgical", label: "Pré-cirúrgico (RX tórax e US abdominal)" },
+	{ id: "metastases", label: "Pesquisa de metástases (RX tórax e US abdominal)" },
+	{ id: "postTrauma", label: "Pós trauma (RX e US abdominal)" }
+];
+
+const FormSchema = z.object({
+	veterinaryClinic: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
+	veterinaryDoctor: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
+	patientName: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
+	patientSpecies: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
+	patientSex: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
+	patientAge: z
+		.string()
+		.min(1, { message: "Este campo é obrigatório." })
+		.refine(
+			v => {
+				let n = Number(v);
+				return !isNaN(n) && v?.length > 0 && n > 0;
+			},
+			{ message: "Idade inválida." }
+		),
+	patientRace: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
+	patientTutor: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
+	examSuspicion: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
+	examComplementaryDone: z.string().optional(),
+	softTissues: z.array(z.string()).optional(),
+	skullItems: z.array(z.string()).optional(),
+	axialSkeletonItems: z.array(z.string()).optional(),
+	appendicularSkeletonItems: z.array(z.string()).optional(),
+	combos: z.array(z.string()).optional(),
+	observations: z.string().optional()
+});
+
+export default function Page() {
+	const form = useForm<z.infer<typeof FormSchema>>({
+		resolver: zodResolver(FormSchema),
+		defaultValues: {
+			veterinaryClinic: "",
+			veterinaryDoctor: "",
+			patientName: "",
+			patientSpecies: "",
+			patientSex: "",
+			patientAge: "",
+			patientRace: "",
+			patientTutor: "",
+			examSuspicion: "",
+			examComplementaryDone: "",
+			softTissues: [],
+			skullItems: [],
+			axialSkeletonItems: [],
+			appendicularSkeletonItems: [],
+			combos: [],
+			observations: ""
+		}
+	});
+
+	function onSubmit(values: z.infer<typeof FormSchema>) {
+		toast("Valores enviados pelo formuário:", {
+			description: (
+				<pre className="mt-2 rounded-md bg-slate-950 p-4">
+					<code className="text-white">{JSON.stringify(values, null, 2)}</code>
+				</pre>
+			)
+		});
+	}
+
 	return (
 		<main className="flex flex-col items-center w-full max-w-3xl mx-auto py-8 px-4">
-			<div className="flex flex-col gap-2 items-center">
-				<h2 className="sm:text-6xl text-4xl font-bold tracking-tight text-gray-900">
-					SoundvetX
-				</h2>
-				<p className="text-base leading-6 text-gray-900">
-					Radiologia em animais de companhia e pets exóticos
-				</p>
-			</div>
+			<MainTitle title="SoundvetX" subtitle="Radiologia em animais de companhia e pets exóticos" />
 
-			<form className="w-full mt-12">
-				<h2 className="text-2xl font-semibold leading-7 text-gray-900">
-					Dados do Requerente
-				</h2>
-
-				<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-					<div className="sm:col-span-3">
-						<label
-							htmlFor="first-name"
-							className="block text-sm font-medium leading-6 text-gray-900"
-						>
-							Clínica Veterinária
-						</label>
-						<div className="mt-2">
-							<input
-								id="first-name"
-								name="first-name"
-								type="text"
-								autoComplete="given-name"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6"
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col w-full gap-8 mt-10">
+					<FormSection title="Dados do Requerente">
+						<FormGrid cols={2}>
+							<FormField
+								control={form.control}
+								name="veterinaryClinic"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Clínica Veterinária</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
-						</div>
-					</div>
 
-					<div className="sm:col-span-3">
-						<label
-							htmlFor="last-name"
-							className="block text-sm font-medium leading-6 text-gray-900"
-						>
-							Last name
-						</label>
-						<div className="mt-2">
-							<input
-								id="last-name"
-								name="last-name"
-								type="text"
-								autoComplete="family-name"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6"
+							<FormField
+								control={form.control}
+								name="veterinaryDoctor"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Médica(o) Veterinária(o)</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
-						</div>
-					</div>
+						</FormGrid>
+					</FormSection>
 
-					<div className="sm:col-span-4">
-						<label
-							htmlFor="email"
-							className="block text-sm font-medium leading-6 text-gray-900"
-						>
-							Email address
-						</label>
-						<div className="mt-2">
-							<input
-								id="email"
-								name="email"
-								type="email"
-								autoComplete="email"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6"
+					<FormSection title="Dados do Paciente">
+						<FormGrid cols={3}>
+							<FormField
+								control={form.control}
+								name="patientName"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Nome</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
-						</div>
-					</div>
 
-					<div className="sm:col-span-3">
-						<label
-							htmlFor="country"
-							className="block text-sm font-medium leading-6 text-gray-900"
-						>
-							Country
-						</label>
-						<div className="mt-2">
-							<select
-								id="country"
-								name="country"
-								autoComplete="country-name"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-							>
-								<option>United States</option>
-								<option>Canada</option>
-								<option>Mexico</option>
-							</select>
-						</div>
-					</div>
-
-					<div className="col-span-full">
-						<label
-							htmlFor="street-address"
-							className="block text-sm font-medium leading-6 text-gray-900"
-						>
-							Street address
-						</label>
-						<div className="mt-2">
-							<input
-								id="street-address"
-								name="street-address"
-								type="text"
-								autoComplete="street-address"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6"
+							<FormField
+								control={form.control}
+								name="patientSpecies"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Espécie</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
-						</div>
-					</div>
 
-					<div className="sm:col-span-2 sm:col-start-1">
-						<label
-							htmlFor="city"
-							className="block text-sm font-medium leading-6 text-gray-900"
-						>
-							City
-						</label>
-						<div className="mt-2">
-							<input
-								id="city"
-								name="city"
-								type="text"
-								autoComplete="address-level2"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6"
+							<FormField
+								control={form.control}
+								name="patientSex"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Sexo</FormLabel>
+										<FormControl>
+											<Select onValueChange={field.onChange} defaultValue={field.value}>
+												<SelectTrigger>
+													<SelectValue placeholder="" />
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value="male">Macho</SelectItem>
+													<SelectItem value="female">Fêmea</SelectItem>
+												</SelectContent>
+											</Select>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
-						</div>
-					</div>
 
-					<div className="sm:col-span-2">
-						<label
-							htmlFor="region"
-							className="block text-sm font-medium leading-6 text-gray-900"
-						>
-							State / Province
-						</label>
-						<div className="mt-2">
-							<input
-								id="region"
-								name="region"
-								type="text"
-								autoComplete="address-level1"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6"
+							<FormField
+								control={form.control}
+								name="patientAge"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Idade</FormLabel>
+										<FormControl>
+											<Input type="number" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
-						</div>
-					</div>
 
-					<div className="sm:col-span-2">
-						<label
-							htmlFor="postal-code"
-							className="block text-sm font-medium leading-6 text-gray-900"
-						>
-							ZIP / Postal code
-						</label>
-						<div className="mt-2">
-							<input
-								id="postal-code"
-								name="postal-code"
-								type="text"
-								autoComplete="postal-code"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:outline-none focus:ring-indigo-600 sm:text-sm sm:leading-6"
+							<FormField
+								control={form.control}
+								name="patientRace"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Raça</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
 							/>
-						</div>
-					</div>
-				</div>
-			</form>
+
+							<FormField
+								control={form.control}
+								name="patientTutor"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Tutor(a)</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</FormGrid>
+					</FormSection>
+
+					<FormSection title="Dados do Exame">
+						<FormField
+							control={form.control}
+							name="examSuspicion"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Suspeita</FormLabel>
+									<FormControl>
+										<Input {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="examComplementaryDone"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Exame complementar realizado</FormLabel>
+									<FormControl>
+										<Input {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</FormSection>
+
+					<FormSection title="Solicitação">
+						<FormGrid cols={2}>
+							<FormField
+								control={form.control}
+								name="softTissues"
+								render={() => (
+									<FormItem>
+										<FormLabel>Tecidos moles</FormLabel>
+										<div className="grid grid-cols-1 gap-2 items-top">
+											{softTissues.map(softTissue => (
+												<CheckboxItem key={softTissue.id} name="softTissues" formControl={form.control} option={softTissue} />
+											))}
+										</div>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="skullItems"
+								render={() => (
+									<FormItem>
+										<FormLabel>Crânio</FormLabel>
+										<div className="grid grid-cols-2 gap-2 items-top">
+											{skullItems.map(skullItem => (
+												<CheckboxItem key={skullItem.id} name="skullItems" formControl={form.control} option={skullItem} />
+											))}
+										</div>
+										<FormDescription>*Exames com necessidade de sedação para melhor posicionamento.</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="axialSkeletonItems"
+								render={() => (
+									<FormItem>
+										<FormLabel>Esqueleto Axial</FormLabel>
+										<div className="grid grid-cols-2 gap-2 items-top">
+											{axialSkeletonItems.map(axialSkeletonItem => (
+												<CheckboxItem key={axialSkeletonItem.id} name="axialSkeletonItems" formControl={form.control} option={axialSkeletonItem} />
+											))}
+										</div>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="appendicularSkeletonItems"
+								render={() => (
+									<FormItem>
+										<FormLabel>Esqueleto Apendicular</FormLabel>
+										<div className="grid grid-cols-1 gap-2 items-top">
+											{appendicularSkeletonItems.map(appendicularSkeletonItem => (
+												<CheckboxItem key={appendicularSkeletonItem.id} name="appendicularSkeletonItems" formControl={form.control} option={appendicularSkeletonItem} />
+											))}
+										</div>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</FormGrid>
+
+						<FormField
+							control={form.control}
+							name="combos"
+							render={() => (
+								<FormItem>
+									<FormLabel>Combos</FormLabel>
+									<div className="grid grid-cols-1 gap-2 items-top">
+										{combos.map(combo => (
+											<CheckboxItem key={combo.id} name="combos" formControl={form.control} option={combo} />
+										))}
+									</div>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="observations"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Observações</FormLabel>
+									<FormControl>
+										<Textarea className="resize-none" rows={4} {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</FormSection>
+
+					<Button type="submit">Enviar</Button>
+				</form>
+			</Form>
 		</main>
 	);
 }

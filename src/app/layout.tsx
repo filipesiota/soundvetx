@@ -1,12 +1,17 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
+import type { Metadata } from "next";
+import { Inter as FontSans } from "next/font/google";
+import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
+import "../styles/globals.css";
 
-const inter = Inter({ subsets: ['latin'] });
+const fontSans = FontSans({
+	subsets: ["latin"],
+	variable: "--font-sans"
+});
 
 export const metadata: Metadata = {
-	title: 'SoundvetX',
-	description: 'Radiologia em animais de companhia e pets exóticos'
+	title: "SoundvetX",
+	description: "Radiologia em animais de companhia e pets exóticos"
 };
 
 export default function RootLayout({
@@ -15,8 +20,15 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang='pt-BR'>
-			<body className={inter.className}>{children}</body>
+		<html lang="pt-BR">
+			<head>
+				<link rel="icon" href="/favicon.ico" sizes="any" />
+			</head>
+			<body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
+				{children}
+
+				<Toaster />
+			</body>
 		</html>
 	);
 }
