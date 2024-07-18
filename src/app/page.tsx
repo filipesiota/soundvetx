@@ -390,6 +390,8 @@ export default function Page() {
 								</FormItem>
 							)}
 						/>
+
+						<FormDescription className="text-center">*Os exames de imagem devem ser correlacionados com a Clínica do paciente e demais exames complementares.</FormDescription>
 					</FormSection>
 
 					<Button type="submit">Enviar</Button>
