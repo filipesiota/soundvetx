@@ -5,7 +5,6 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { FormSection } from "@/components/form-section";
 import { FormGrid } from "@/components/form-grid";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,6 +14,7 @@ import { CheckboxItem } from "@/components/checkbox-item";
 import React from "react";
 import { CheckboxOption } from "@/components/checkbox-item";
 import { Textarea } from "@/components/ui/textarea";
+import { XRayRequest, XRayRequestSchema } from "@/@types/xray-request";
 
 const softTissues: CheckboxOption[] = [
 	{ id: "chest", label: "Tórax" },
@@ -52,60 +52,16 @@ const combos: CheckboxOption[] = [
 	{ id: "postTrauma", label: "Pós trauma (RX e US abdominal)" }
 ];
 
-const FormSchema = z.object({
-	veterinaryClinic: z.string().trim().min(1, {
-		message: "Este campo é obrigatório."
-	}),
-	veterinaryDoctor: z.string().trim().min(1, {
-		message: "Este campo é obrigatório."
-	}),
-	patientName: z.string().trim().min(1, {
-		message: "Este campo é obrigatório."
-	}),
-	patientSpecies: z.string().trim().min(1, {
-		message: "Este campo é obrigatório."
-	}),
-	patientSex: z.string().trim().min(1, {
-		message: "Este campo é obrigatório."
-	}),
-	patientAge: z
-		.string()
-		.min(1, { message: "Este campo é obrigatório." })
-		.refine(
-			v => {
-				let n = Number(v);
-				return !isNaN(n) && v?.length > 0 && n > 0;
-			},
-			{ message: "Idade inválida." }
-		),
-	patientRace: z.string().trim().min(1, {
-		message: "Este campo é obrigatório."
-	}),
-	patientTutor: z.string().trim().min(1, {
-		message: "Este campo é obrigatório."
-	}),
-	examSuspicion: z.string().trim().min(1, {
-		message: "Este campo é obrigatório."
-	}),
-	examComplementaryDone: z.string().optional(),
-	softTissues: z.array(z.string()).optional(),
-	skullItems: z.array(z.string()).optional(),
-	axialSkeletonItems: z.array(z.string()).optional(),
-	appendicularSkeletonItems: z.array(z.string()).optional(),
-	combos: z.array(z.string()).optional(),
-	observations: z.string().optional()
-});
-
 export default function Page() {
-	const form = useForm<z.infer<typeof FormSchema>>({
-		resolver: zodResolver(FormSchema),
+	const form = useForm<XRayRequest>({
+		resolver: zodResolver(XRayRequestSchema),
 		defaultValues: {
 			veterinaryClinic: "",
 			veterinaryDoctor: "",
 			patientName: "",
 			patientSpecies: "",
 			patientSex: "",
-			patientAge: "",
+			patientAge: undefined,
 			patientRace: "",
 			patientTutor: "",
 			examSuspicion: "",
@@ -119,7 +75,7 @@ export default function Page() {
 		}
 	});
 
-	function onSubmit(values: z.infer<typeof FormSchema>) {
+	function onSubmit(values: XRayRequest) {
 		toast("Valores enviados pelo formuário:", {
 			description: (
 				<pre className="mt-2 rounded-md bg-slate-950 p-4">
