@@ -8,28 +8,12 @@ import { RequestError } from "@/@types/request-response";
 import { readFileSync } from "fs";
 
 export async function generatePDF(): Promise<ComboReturn<string, RequestError>> {
-	let browser = null;
-
-	if (process.env.NODE_ENV === "development") {
-		browser = await puppeteer.launch({
-			args: ["--no-sandbox", "--disable-setuid-sandbox"],
-			headless: true
-		});
-	} else if (process.env.NODE_ENV === "production") {
-		browser = await puppeteerCore.launch({
-			args: chromium.args,
-			defaultViewport: chromium.defaultViewport,
-			executablePath: await chromium.executablePath(),
-			headless: chromium.headless
-		});
-	} else {
-        return {
-            data: null,
-            error: {
-                message: "Invalid environment"
-            }
-        };
-    }
+	const browser = await puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless
+    });
 
 	const page = await browser.newPage();
 	const absolutePath = path.resolve("src/templates/report.html");
@@ -47,7 +31,7 @@ export async function generatePDF(): Promise<ComboReturn<string, RequestError>> 
 	}
 
 	return {
-		data: `${process.env.PUBLIC_URL}/report.pdf`,
+		data: `${process.env.VERCEL_PROJECT_PRODUCTION_URL}/report.pdf`,
 		error: null
 	};
 }
