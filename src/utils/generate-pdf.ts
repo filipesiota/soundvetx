@@ -15,8 +15,8 @@ export async function generatePDF(): Promise<ComboReturn<string, RequestError>> 
         });
 
         const page = await browser.newPage();
-        const absolutePath = join(process.cwd(), "src", "templates", "report.html");
-        const outputPath = join(process.cwd(), "public", "report.pdf");
+        const absolutePath = "src/templates/report.html";
+        const outputPath = "public/report.pdf";
 
         await page.goto(`file://${absolutePath}`, { waitUntil: "networkidle0" });
         await page.pdf({ path: outputPath, format: "A4" });
