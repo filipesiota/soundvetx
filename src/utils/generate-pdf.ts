@@ -2,9 +2,8 @@ import puppeteerCore from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 import { ComboReturn } from "@/@types/combo-return";
 import { RequestError } from "@/@types/request-response";
-import { readFileSync, promises as fsPromises } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 export async function generatePDF(): Promise<ComboReturn<string, RequestError>> {
     try {
@@ -16,19 +15,10 @@ export async function generatePDF(): Promise<ComboReturn<string, RequestError>> 
         });
 
         const page = await browser.newPage();
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = dirname(__filename);
-        const absolutePath = join(__dirname, "../templates/report.html");
-        
-        // Ensure the HTML file is readable
-        await fsPromises.access(absolutePath);
-        
-        await page.goto(`file://${absolutePath}`, { waitUntil: "networkidle0" });
-        const outputPath = join(__dirname, "../../public/report.pdf");
-        
-        // Ensure the public directory exists
-        await fsPromises.mkdir(join(__dirname, "../../public"), { recursive: true });
+        const absolutePath = join(process.cwd(), "src", "templates", "report.html");
+        const outputPath = join(process.cwd(), "public", "report.pdf");
 
+        await page.goto(`file://${absolutePath}`, { waitUntil: "networkidle0" });
         await page.pdf({ path: outputPath, format: "A4" });
         await browser.close();
 
@@ -42,7 +32,7 @@ export async function generatePDF(): Promise<ComboReturn<string, RequestError>> 
         }
 
         return {
-            data: `${process.env.VERCEL_PROJECT_PRODUCTION_URL}/report.pdf`,
+            data: `${process.env.VERCEL_URL}/report.pdf`,
             error: null,
         };
     } catch (error: any) {
