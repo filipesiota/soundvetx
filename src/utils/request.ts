@@ -1,4 +1,4 @@
-import { RequestError } from "@/@types/request-error";
+import { RequestError } from "@/@types/request-response";
 
 export function errParamRequired(param: string, type: string): RequestError {
     return {

@@ -1,25 +1,31 @@
 import { RequestResponse } from "@/@types/request-response";
 import { validateXRayRequest } from "@/@types/xray-request";
-import { getTextMessageInput, sendMessage } from "@/utils/wa-message-helper";
+import { generatePDF } from "@/utils/generate-pdf";
+import { sendMessage } from "@/utils/wa-message-helper";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest): Promise<NextResponse<RequestResponse>> {
 	const body = await request.json();
-	const { data, error } = validateXRayRequest(body);
+	const { data: validationData, error: validationError } = validateXRayRequest(body);
 
-	if (error !== null) {
-		return NextResponse.json(error, { status: 400 });
+	if (validationError !== null) {
+		return NextResponse.json(validationError, { status: 400 });
 	}
 
-	const textMessage = getTextMessageInput(process.env.RECIPIENT_WAID ?? "", "Olá, tudo bem?\nRecebemos um novo pedido de exame de raio-x. Em breve entraremos em contato para agendar a consulta.");
+	const { data: pdfUrl, error: pdfError } = await generatePDF();
 
-    try {
-        const response = await sendMessage(textMessage);
+	if (pdfError !== null) {
+		return NextResponse.json(pdfError, { status: 500 });
+	}
 
-        console.log(response);
-    } catch {
-        return NextResponse.json({ message: "Failed to send report" }, { status: 500 });
-    }
+	const { error: messageError } = await sendMessage({
+		text: `Hello, you have a new X-Ray request. Please download the report from this link: ${pdfUrl}`,
+		mediaUrl: pdfUrl ? [pdfUrl] : []
+	});
 
-	return NextResponse.json({ message: "Sent report successfully", data: data }, { status: 200 });
+	if (messageError !== null) {
+		return NextResponse.json(messageError, { status: 500 });
+	}
+
+	return NextResponse.json({ message: "Sent report successfully", data: validationData }, { status: 200 });
 }

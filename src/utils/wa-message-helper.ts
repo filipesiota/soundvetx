@@ -1,27 +1,33 @@
-export function sendMessage(data: string) {
-	const url = `https://graph.facebook.com/${process.env.VERSION}/${process.env.PHONE_NUMBER_ID}/messages`;
+import { ComboReturn } from "@/@types/combo-return";
+import { RequestError } from "@/@types/request-response";
+import twilio from "twilio";
 
-	const config: RequestInit = {
-	  method: 'POST',
-	  headers: {
-		'Authorization': `Bearer ${process.env.ACCESS_TOKEN}`,
-		'Content-Type': 'application/json'
-	  },
-	  body: data
-	};
+export type SendMessageProps = {
+	text?: string;
+	mediaUrl?: string[];
+};
 
-	return fetch(url, config);
-}
+export async function sendMessage({ text, mediaUrl }: SendMessageProps): Promise<ComboReturn<boolean, RequestError>> {
+	const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-export function getTextMessageInput(recipient: string, text: string) {
-	return JSON.stringify({
-		messaging_product: "whatsapp",
-		preview_url: false,
-		recipient_type: "individual",
-		to: recipient,
-		type: "text",
-		text: {
-			body: text
-		}
+	const message = await client.messages.create({
+		from: process.env.TWILIO_FROM_PHONE_NUMBER,
+		body: text,
+		mediaUrl: mediaUrl,
+		to: process.env.TWILIO_TO_PHONE_NUMBER ?? ""
 	});
+
+	if (message.errorCode) {
+		return {
+			data: false,
+			error: {
+				message: `Failed to send message: ${message.errorCode} - ${message.errorMessage}`
+			}
+		};
+	}
+
+	return {
+		data: true,
+		error: null
+	};
 }

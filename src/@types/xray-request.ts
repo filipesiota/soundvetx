@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { malformedBodyRequest, validateParam } from "@/utils/request";
-import { RequestResponse } from "@/@types/request-response";
+import { RequestError } from "@/@types/request-response";
 import { ComboReturn } from "@/@types/combo-return";
 
 export const XRayRequestSchema = z.object({
@@ -43,7 +43,7 @@ export const XRayRequestSchema = z.object({
 
 export type XRayRequest = z.infer<typeof XRayRequestSchema>;
 
-export function validateXRayRequest(data: any): ComboReturn<XRayRequest, RequestResponse> {
+export function validateXRayRequest(data: any): ComboReturn<XRayRequest, RequestError> {
 	if (data === null || typeof data !== "object") {
 		return {
 			data: null,
