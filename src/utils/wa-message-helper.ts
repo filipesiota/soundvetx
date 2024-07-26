@@ -11,10 +11,10 @@ export async function sendMessage({ text, mediaUrl }: SendMessageProps): Promise
 	const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 	const message = await client.messages.create({
-		from: process.env.TWILIO_FROM_PHONE_NUMBER,
 		body: text,
 		mediaUrl: mediaUrl,
-		to: process.env.TWILIO_TO_PHONE_NUMBER ?? ""
+		from: `whatsapp:${process.env.TWILIO_FROM_PHONE_NUMBER}`,
+		to: `whatsapp:${process.env.TWILIO_TO_PHONE_NUMBER}`
 	});
 
 	if (message.errorCode) {

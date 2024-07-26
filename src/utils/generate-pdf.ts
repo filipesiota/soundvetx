@@ -1,24 +1,32 @@
-import puppeteerCore from "puppeteer-core";
+import puppeteer from "puppeteer";
 import chromium from "@sparticuz/chromium";
 import { ComboReturn } from "@/@types/combo-return";
 import { RequestError } from "@/@types/request-response";
 import { readFileSync } from "fs";
-import { join } from "path";
 
 export async function generatePDF(): Promise<ComboReturn<string, RequestError>> {
     try {
-        const browser = await puppeteerCore.launch({
-            args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath(),
-            headless: chromium.headless,
-        });
+        let browser;
+
+        if (process.env.VERCEL_ENV === "production") {
+            browser = await puppeteer.launch({
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath(),
+                headless: chromium.headless
+            });
+        } else {
+            browser = await puppeteer.launch({
+                headless: true
+            });
+        }
 
         const page = await browser.newPage();
-        const absolutePath = "src/templates/report.html";
-        const outputPath = "public/report.pdf";
+        const absolutePath = `${process.env.VERCEL_URL}/templates/report.html`;
+        const outputPath = "public/uploads/report.pdf";
 
-        await page.goto(`file://${absolutePath}`, { waitUntil: "networkidle0" });
+        await page.goto(absolutePath, { waitUntil: "networkidle0" });
+
         await page.pdf({ path: outputPath, format: "A4" });
         await browser.close();
 
@@ -31,9 +39,11 @@ export async function generatePDF(): Promise<ComboReturn<string, RequestError>> 
             };
         }
 
+        console.log(`${process.env.VERCEL_URL}/uploads/report.pdf`);
+
         return {
-            data: `${process.env.VERCEL_URL}/report.pdf`,
-            error: null,
+            data: `${process.env.VERCEL_URL}/uploads/report.pdf`,
+            error: null
         };
     } catch (error: any) {
         return {
