@@ -13,6 +13,8 @@ export async function storeBlob(file: Blob): Promise<ComboReturn<string, Request
 			error: null
 		};
 	} catch (error: any) {
+		console.log(error);
+
 		return {
 			data: null,
 			error: {

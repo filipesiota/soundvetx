@@ -35,6 +35,8 @@ export async function generatePDF(): Promise<ComboReturn<Blob, RequestError>> {
 			error: null
 		};
 	} catch (error: any) {
+		console.log(error);
+		
 		return {
 			data: null,
 			error: {
