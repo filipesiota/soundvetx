@@ -6,7 +6,7 @@ import { readFileSync } from "fs";
 import path from "path";
 
 async function getBrowser(): Promise<Puppeteer.Browser> {
-	if (process.env.NODE_ENV === "production") {
+	if (process.env.VERCEL_ENV === "production") {
 		return Puppeteer.launch({
 			args: Chromium.args,
 			defaultViewport: Chromium.defaultViewport,
