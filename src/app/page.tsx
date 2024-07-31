@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MainTitle } from "@/components/main-title";
 import { toast } from "sonner";
 import { CheckboxItem } from "@/components/checkbox-item";
-import React from "react";
+import { useState } from "react";
 import { CheckboxOption } from "@/components/checkbox-item";
 import { Textarea } from "@/components/ui/textarea";
 import { XRayRequest, XRayRequestSchema } from "@/@types/xray-request";
@@ -53,6 +53,8 @@ const combos: CheckboxOption[] = [
 ];
 
 export default function Page() {
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
 	const form = useForm<XRayRequest>({
 		resolver: zodResolver(XRayRequestSchema),
 		defaultValues: {
@@ -62,7 +64,7 @@ export default function Page() {
 			patientSpecies: "",
 			patientSex: "",
 			patientAge: undefined,
-			patientRace: "",
+			patientBreed: "",
 			patientTutor: "",
 			examSuspicion: "",
 			examComplementaryDone: "",
@@ -75,14 +77,39 @@ export default function Page() {
 		}
 	});
 
-	function onSubmit(values: XRayRequest) {
-		toast("Valores enviados pelo formuário:", {
-			description: (
-				<pre className="mt-2 rounded-md bg-slate-950 p-4">
-					<code className="text-white">{JSON.stringify(values, null, 2)}</code>
-				</pre>
-			)
-		});
+	async function onSubmit(values: XRayRequest) {
+		setIsSubmitting(true);
+		
+		const fetchOptions = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(values)
+		};
+
+		try {
+			const response = await fetch("/api/send-report", fetchOptions);
+			const data = await response.json();
+
+			if (response.ok) {
+				console.log(data);
+
+				toast.success("Formulário processado com sucesso!");
+			} else {
+				throw data;
+			}			
+		} catch (error: any) {
+			console.error(error);
+
+			toast.error("Ocorreu um erro ao processar os dados do formulário!", {
+				description: (
+					<p>Revise as informações e envie-o novamente.</p>
+				)
+			});
+		} finally {
+			setIsSubmitting(false);
+		}
 	}
 
 	return (
@@ -165,8 +192,8 @@ export default function Page() {
 													<SelectValue placeholder="" />
 												</SelectTrigger>
 												<SelectContent>
-													<SelectItem value="male">Macho</SelectItem>
-													<SelectItem value="female">Fêmea</SelectItem>
+													<SelectItem value="Macho">Macho</SelectItem>
+													<SelectItem value="Fêmea">Fêmea</SelectItem>
 												</SelectContent>
 											</Select>
 										</FormControl>
@@ -191,7 +218,7 @@ export default function Page() {
 
 							<FormField
 								control={form.control}
-								name="patientRace"
+								name="patientBreed"
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Raça</FormLabel>
@@ -227,7 +254,7 @@ export default function Page() {
 								<FormItem>
 									<FormLabel>Suspeita</FormLabel>
 									<FormControl>
-										<Input {...field} />
+										<Textarea className="resize-none" rows={2} {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -241,7 +268,7 @@ export default function Page() {
 								<FormItem>
 									<FormLabel>Exame complementar realizado</FormLabel>
 									<FormControl>
-										<Input {...field} />
+										<Textarea className="resize-none" rows={2} {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -350,7 +377,7 @@ export default function Page() {
 						<FormDescription className="text-center">*Os exames de imagem devem ser correlacionados com a Clínica do paciente e demais exames complementares.</FormDescription>
 					</FormSection>
 
-					<Button type="submit">Enviar</Button>
+					<Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Enviando...' : 'Enviar'}</Button>
 				</form>
 			</Form>
 		</main>

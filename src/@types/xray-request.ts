@@ -20,10 +20,10 @@ export const XRayRequestSchema = z.object({
 		message: "Este campo é obrigatório."
 	}),
 	patientAge: z
-		.number()
+		.number({ message: "Este campo é obrigatório." })
 		.or(z.string().min(1, { message: "Este campo é obrigatório." }).regex(/\d+/).transform(Number))
 		.refine(n => n >= 0, { message: "Idade inválida." }),
-	patientRace: z.string().trim().min(1, {
+	patientBreed: z.string().trim().min(1, {
 		message: "Este campo é obrigatório."
 	}),
 	patientTutor: z.string().trim().min(1, {
@@ -95,7 +95,7 @@ export function validateXRayRequest(data: any): ComboReturn<XRayRequest, Request
 			error: error
 		};
 
-	error = validateParam(data, "patientRace", "string", true);
+	error = validateParam(data, "patientBreed", "string", true);
 	if (error !== null)
 		return {
 			data: null,

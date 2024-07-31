@@ -26,12 +26,12 @@ const CheckboxItem = React.forwardRef<HTMLDivElement, CheckboxItemProps>(({ clas
 					<FormItem key={option.id} ref={ref} className={cn("flex flex-row items-start space-x-2 space-y-0", className)}>
 						<FormControl>
 							<Checkbox
-								checked={field.value?.includes(option.id)}
+								checked={field.value?.includes(option.label)}
 								onCheckedChange={checked => {
 									if (checked) {
-										return field.onChange([...(field.value || []), option.id]);
+										return field.onChange([...(field.value || []), option.label]);
 									} else {
-										return field.onChange((field.value || []).filter((v: string) => v !== option.id));
+										return field.onChange((field.value || []).filter((v: string) => v !== option.label));
 									}
 								}}
 							/>

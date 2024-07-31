@@ -1,5 +1,5 @@
 import { RequestResponse } from "@/@types/request-response";
-import { validateXRayRequest } from "@/@types/xray-request";
+import { validateXRayRequest, XRayRequest } from "@/@types/xray-request";
 import { generatePDF } from "@/utils/generate-pdf";
 import { storeBlob } from "@/utils/store-blob";
 import { sendMessage } from "@/utils/wa-message-helper";
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<RequestRe
 		return NextResponse.json(validationError, { status: 400 });
 	}
 
-	const { data: pdfBuffer, error: pdfError } = await generatePDF();
+	const { data: pdfBuffer, error: pdfError } = await generatePDF(validationData as XRayRequest);
 
 	if (pdfError !== null) {
 		return NextResponse.json(pdfError, { status: 500 });
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<RequestRe
 	}
 
 	const { error: messageError } = await sendMessage({
-		text: "Here's the report you requested",
+		text: `Nova solicitação de exame de raio-x recebida.\n\n*Nome do Paciente:* ${validationData?.patientName}`,
 		mediaUrl: [blobUrl as string]
 	});
 
