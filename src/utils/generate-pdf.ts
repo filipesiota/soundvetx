@@ -24,9 +24,7 @@ export async function generatePDF(): Promise<ComboReturn<Blob, RequestError>> {
 	try {
 		const browser = await getBrowser();
 		const page = await browser.newPage();
-		const templatePath = path.join(process.cwd(), "src", "templates", "report.html");
-		const templateContent = readFileSync(templatePath, "utf8");
-		await page.setContent(templateContent, { waitUntil: "networkidle0" });
+		await page.goto(`${process.env.VERCEL_URL}/report.html`, { waitUntil: "networkidle0" });
 		const pdfBuffer = await page.pdf({ format: "A4" });
 		await browser.close();
 
@@ -36,7 +34,7 @@ export async function generatePDF(): Promise<ComboReturn<Blob, RequestError>> {
 		};
 	} catch (error: any) {
 		console.log(error);
-		
+
 		return {
 			data: null,
 			error: {
