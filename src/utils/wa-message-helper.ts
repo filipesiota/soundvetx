@@ -7,7 +7,7 @@ export type SendMessageProps = {
 	mediaUrl?: string[];
 };
 
-export async function sendMessage({ text, mediaUrl }: SendMessageProps): Promise<ComboReturn<boolean, RequestError>> {
+export async function sendMessage({ text, mediaUrl }: SendMessageProps): Promise<ComboReturn<null, RequestError>> {
 	const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 	const message = await client.messages.create({
@@ -19,7 +19,7 @@ export async function sendMessage({ text, mediaUrl }: SendMessageProps): Promise
 
 	if (message.errorCode) {
 		return {
-			data: false,
+			data: null,
 			error: {
 				message: `Failed to send message: ${message.errorCode} - ${message.errorMessage}`
 			}
@@ -27,7 +27,7 @@ export async function sendMessage({ text, mediaUrl }: SendMessageProps): Promise
 	}
 
 	return {
-		data: true,
+		data: null,
 		error: null
 	};
 }

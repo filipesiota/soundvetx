@@ -1,56 +1,45 @@
-import puppeteer from "puppeteer";
-import chromium from "@sparticuz/chromium";
+import * as Puppeteer from "puppeteer";
+import Chromium from "@sparticuz/chromium";
 import { ComboReturn } from "@/@types/combo-return";
 import { RequestError } from "@/@types/request-response";
 import { readFileSync } from "fs";
+import path from "path";
 
-export async function generatePDF(): Promise<ComboReturn<string, RequestError>> {
-    try {
-        let browser;
+async function getBrowser(): Promise<Puppeteer.Browser> {
+	if (process.env.NODE_ENV === "production") {
+		return Puppeteer.launch({
+			args: Chromium.args,
+			defaultViewport: Chromium.defaultViewport,
+			executablePath: await Chromium.executablePath(),
+			headless: Chromium.headless
+		});
+	}
 
-        if (process.env.VERCEL_ENV === "production") {
-            browser = await puppeteer.launch({
-                args: chromium.args,
-                defaultViewport: chromium.defaultViewport,
-                executablePath: await chromium.executablePath(),
-                headless: chromium.headless
-            });
-        } else {
-            browser = await puppeteer.launch({
-                headless: true
-            });
-        }
+	return Puppeteer.launch({
+		headless: true
+	});
+}
 
-        const page = await browser.newPage();
-        const absolutePath = `${process.env.VERCEL_URL}/templates/report.html`;
-        const outputPath = "public/uploads/report.pdf";
+export async function generatePDF(): Promise<ComboReturn<Blob, RequestError>> {
+	try {
+		const browser = await getBrowser();
+		const page = await browser.newPage();
+		const templatePath = path.join(process.cwd(), "src", "templates", "report.html");
+		const templateContent = readFileSync(templatePath, "utf8");
+		await page.setContent(templateContent, { waitUntil: "networkidle0" });
+		const pdfBuffer = await page.pdf({ format: "A4" });
+		await browser.close();
 
-        await page.goto(absolutePath, { waitUntil: "networkidle0" });
-
-        await page.pdf({ path: outputPath, format: "A4" });
-        await browser.close();
-
-        if (readFileSync(outputPath).length === 0) {
-            return {
-                data: null,
-                error: {
-                    message: "Failed to generate PDF",
-                },
-            };
-        }
-
-        console.log(`${process.env.VERCEL_URL}/uploads/report.pdf`);
-
-        return {
-            data: `${process.env.VERCEL_URL}/uploads/report.pdf`,
-            error: null
-        };
-    } catch (error: any) {
-        return {
-            data: null,
-            error: {
-                message: error.message || "An unexpected error occurred",
-            },
-        };
-    }
+		return {
+			data: new Blob([pdfBuffer], { type: "application/pdf" }),
+			error: null
+		};
+	} catch (error: any) {
+		return {
+			data: null,
+			error: {
+				message: "Failed to generate PDF file"
+			}
+		};
+	}
 }
