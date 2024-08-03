@@ -5,8 +5,6 @@ import { storeBlob } from "@/utils/store-blob";
 import { sendMessage } from "@/utils/wa-message-helper";
 import { NextRequest, NextResponse } from "next/server";
 
-// export const runtime = "edge";
-
 export async function POST(request: NextRequest): Promise<NextResponse<RequestResponse>> {
 	const body = await request.json();
 	const { data: validationData, error: validationError } = validateXRayRequest(body);

@@ -73,4 +73,10 @@
 		-webkit-appearance: none;
 		margin: 0;
 	}
+
+	a {
+		@apply text-blue-700;
+		@apply hover:underline;
+		@apply cursor-pointer;
+	}
 }

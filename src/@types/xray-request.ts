@@ -166,7 +166,7 @@ export function validateXRayRequest(data: any): ComboReturn<XRayRequest, Request
 		};
 
 	return {
-		data: data,
+		data: data as XRayRequest,
 		error: null
 	};
 }

@@ -52,7 +52,7 @@ const combos: CheckboxOption[] = [
 	{ id: "postTrauma", label: "Pós trauma (RX e US abdominal)" }
 ];
 
-export default function Page() {
+export default function ExamRequestPage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm<XRayRequest>({
@@ -113,7 +113,7 @@ export default function Page() {
 	}
 
 	return (
-		<main className="flex flex-col items-center w-full max-w-3xl mx-auto py-8 px-4">
+		<main className="flex flex-col items-center w-full max-w-screen-md mx-auto py-8">
 			<MainTitle title="SoundvetX" subtitle="Radiologia em animais de companhia e pets exóticos" />
 
 			<Form {...form}>

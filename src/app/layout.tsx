@@ -24,7 +24,7 @@ export default function RootLayout({
 			<head>
 				<link rel="icon" href="/favicon.ico" sizes="any" />
 			</head>
-			<body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
+			<body className={cn("min-h-dvh bg-background font-sans antialiased h-full px-4", fontSans.variable)}>
 				{children}
 
 				<Toaster />
