@@ -26,7 +26,7 @@ export default function LoginPage() {
 	}
 
 	return (
-		<main className="flex flex-col items-center justify-center w-full h-dvh max-w-md mx-auto py-8">
+		<main className="flex flex-col items-center justify-center w-full h-full min-h-dvh max-w-md mx-auto py-8">
 			<MainTitle title="SoundvetX" />
 
 			<Form {...form}>
@@ -64,7 +64,7 @@ export default function LoginPage() {
 					<Button type="submit">Entrar</Button>
 
                     <div className="text-center">
-                        Não possui uma conta? <Link href="/register">Crie uma agora!</Link>
+                        Não possui uma conta? <Link href="/register">Cadastre uma agora!</Link>
                     </div>
 				</form>
 			</Form>

@@ -4,12 +4,12 @@ import { malformedBodyRequest, validateParam } from "@/utils/request";
 import { RequestError } from "./request-response";
 
 export const LoginSchema = z.object({
-    email: z.string().min(1, {
+    email: z.string().trim().min(1, {
         message: "Preencha o campo de e-mail."
     }).email({
         message: "E-mail inválido."
     }),
-    password: z.string().min(1, {
+    password: z.string().trim().min(1, {
         message: "Preencha o campo de senha."
     })
 });

@@ -4,25 +4,31 @@ import { malformedBodyRequest, validateParam } from "@/utils/request";
 import { RequestError } from "./request-response";
 
 export const VeterinarianSchema = z.object({
-    fullName: z.string().min(1, {
+    fullName: z.string().trim().min(1, {
         message: "Preencha o campo de nome completo."
     }),
-    crmv: z.string().min(1, {
+    crmv: z.string().trim().min(1, {
         message: "Preencha o campo de CRMV."
     }),
-    email: z.string().min(1, {
+    uf: z.string().trim().min(1, {
+        message: "Preencha o campo de UF."
+    }),
+    email: z.string().trim().min(1, {
         message: "Preencha o campo de e-mail."
     }).email({
         message: "E-mail inválido."
     }),
-    password: z.string().min(1, {
+    password: z.string().trim().min(1, {
         message: "Preencha o campo de senha."
     }).min(5, {
         message: "A senha deve ter no mínimo 5 caracteres."
     }),
-    confirmPassword: z.string().min(1, {
+    confirmPassword: z.string().trim().min(1, {
         message: "Preencha o campo de confirmação de senha."
     })
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não coincidem.",
+    path: ["confirmPassword"]
 });
 
 export type Veterinarian = z.infer<typeof VeterinarianSchema>;
