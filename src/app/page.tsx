@@ -15,6 +15,8 @@ import { useState } from "react";
 import { CheckboxOption } from "@/components/checkbox-item";
 import { Textarea } from "@/components/ui/textarea";
 import { XRayRequest, XRayRequestSchema } from "@/@types/xray-request";
+import { sendRequest } from "@/utils/request";
+import { RequestError, RequestMessage } from "@/@types/request-response";
 
 const softTissues: CheckboxOption[] = [
 	{ id: "chest", label: "Tórax" },
@@ -79,34 +81,21 @@ export default function ExamRequestPage() {
 
 	async function onSubmit(values: XRayRequest) {
 		setIsSubmitting(true);
-		
-		const fetchOptions = {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify(values)
-		};
 
 		try {
-			const response = await fetch("/api/send-report", fetchOptions);
-			const data = await response.json();
-
-			if (response.ok) {
-				console.log(data);
-
-				toast.success("Formulário processado com sucesso!");
-			} else {
-				throw data;
-			}			
-		} catch (error: any) {
-			console.error(error);
-
-			toast.error("Ocorreu um erro ao processar os dados do formulário!", {
-				description: (
-					<p>Revise as informações e envie-o novamente.</p>
-				)
+			const { message, data } = await sendRequest({
+				url: "/api/generate-report",
+				method: "POST",
+				data: values
 			});
+
+			console.log(data);
+
+			toast.success(message.clientMessage);
+		} catch (error: any) {
+			const { serverMessage, clientMessage } = error as RequestMessage;
+			console.error(serverMessage);
+			toast.error(clientMessage);
 		} finally {
 			setIsSubmitting(false);
 		}

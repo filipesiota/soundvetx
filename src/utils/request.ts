@@ -1,4 +1,5 @@
-import { RequestError } from "@/@types/request-response";
+import { RequestError, RequestMessage, RequestResponse } from "@/@types/request-response";
+import { Request } from "@/@types/request";
 
 export function errParamRequired(param: string, type: string): RequestError {
 	return {
@@ -47,4 +48,22 @@ export function validateParam(object: any, param: string, type: string, required
 	}
 
 	return null;
+}
+
+export async function sendRequest({ url, method, data }: Request): Promise<RequestResponse<any>> {
+	const response = await fetch(url, {
+		method,
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(data)
+	});
+
+	const responseData = await response.json();
+
+	if (response.ok) {
+		return responseData;
+	} else {
+		throw responseData.message as RequestMessage;
+	}
 }
