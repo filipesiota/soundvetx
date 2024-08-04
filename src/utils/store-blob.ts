@@ -18,7 +18,10 @@ export async function storeBlob(file: Blob): Promise<ComboReturn<string, Request
 		return {
 			data: null,
 			error: {
-				message: "Failed to store PDF file"
+				message: {
+					serverMessage: "Failed to store PDF file",
+					clientMessage: "Ocorreu um erro ao armazenar o arquivo do exame. Por favor, contate a SoundvetX."
+				}
 			}
 		};
 	}

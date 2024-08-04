@@ -4,10 +4,10 @@ import { RequestError } from "@/@types/request-response";
 import { ComboReturn } from "@/@types/combo-return";
 
 export const XRayRequestSchema = z.object({
-	veterinaryClinic: z.string().trim().min(1, {
+	veterinarianClinic: z.string().trim().min(1, {
 		message: "Este campo é obrigatório."
 	}),
-	veterinaryDoctor: z.string().trim().min(1, {
+	veterinarianName: z.string().trim().min(1, {
 		message: "Este campo é obrigatório."
 	}),
 	patientName: z.string().trim().min(1, {
@@ -53,14 +53,14 @@ export function validateXRayRequest(data: any): ComboReturn<XRayRequest, Request
 
 	let error;
 
-	error = validateParam(data, "veterinaryClinic", "string", true);
+	error = validateParam(data, "veterinarianClinic", "string", true);
 	if (error !== null)
 		return {
 			data: null,
 			error: error
 		};
 
-	error = validateParam(data, "veterinaryDoctor", "string", true);
+	error = validateParam(data, "veterinarianName", "string", true);
 	if (error !== null)
 		return {
 			data: null,

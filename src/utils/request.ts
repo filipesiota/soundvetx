@@ -2,19 +2,28 @@ import { RequestError } from "@/@types/request-response";
 
 export function errParamRequired(param: string, type: string): RequestError {
 	return {
-		message: `Param ${param} (type: ${type}) is required`
+		message: {
+			serverMessage: `Param ${param} (type: ${type}) is required`,
+			clientMessage: `Algum campo obrigatório não foi preenchido. Por favor, verifique e tente novamente.`
+		}
 	};
 }
 
 export function invalidParamType(param: string, type: string): RequestError {
 	return {
-		message: `Param ${param} must be of type ${type}`
+		message: {
+			serverMessage: `Param ${param} must be of type ${type}`,
+			clientMessage: `Algum campo foi preenchido de forma incorreta. Por favor, verifique e tente novamente.`
+		}
 	};
 }
 
 export function malformedBodyRequest(): RequestError {
 	return {
-		message: `Malformed body request`
+		message: {
+			serverMessage: `Malformed body request`,
+			clientMessage: `Ocorreu um erro ao enviar o formulário. Por favor, contate a SoundvetX.`
+		}
 	};
 }
 

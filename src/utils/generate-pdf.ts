@@ -73,7 +73,10 @@ export async function generatePDF(formData: XRayRequest): Promise<ComboReturn<Bl
 		return {
 			data: null,
 			error: {
-				message: "Failed to generate PDF file"
+				message: {
+					serverMessage: "Failed to generate PDF file",
+					clientMessage: "Ocorreu um erro ao gerar o arquivo do exame. Por favor, contate a SoundvetX."
+				}
 			}
 		};
 	}

@@ -58,8 +58,8 @@ export default function ExamRequestPage() {
 	const form = useForm<XRayRequest>({
 		resolver: zodResolver(XRayRequestSchema),
 		defaultValues: {
-			veterinaryClinic: "",
-			veterinaryDoctor: "",
+			veterinarianClinic: "",
+			veterinarianName: "",
 			patientName: "",
 			patientSpecies: "",
 			patientSex: "",
@@ -122,7 +122,7 @@ export default function ExamRequestPage() {
 						<FormGrid cols={2}>
 							<FormField
 								control={form.control}
-								name="veterinaryClinic"
+								name="veterinarianClinic"
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Clínica Veterinária</FormLabel>
@@ -136,7 +136,7 @@ export default function ExamRequestPage() {
 
 							<FormField
 								control={form.control}
-								name="veterinaryDoctor"
+								name="veterinarianName"
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Médica(o) Veterinária(o)</FormLabel>

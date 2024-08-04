@@ -21,7 +21,10 @@ export async function sendMessage({ text, mediaUrl }: SendMessageProps): Promise
 		return {
 			data: null,
 			error: {
-				message: `Failed to send message: ${message.errorCode} - ${message.errorMessage}`
+				message: {
+					serverMessage: "Failed to send message",
+					clientMessage: "Ocorreu um erro ao enviar o arquivo do exame por WhatsApp. Por favor, contate a SoundvetX."
+				}
 			}
 		};
 	}
