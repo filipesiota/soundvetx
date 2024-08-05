@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/tailwind-utils";
 import { cva, VariantProps } from "class-variance-authority";
 
 const formGridVariants = cva("grid grid-cols-1 gap-2 sm:gap-6 items-top", {

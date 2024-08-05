@@ -1,18 +1,18 @@
-import { RequestError, RequestResponse } from "@/@types/request-response";
-import { validateXRayRequest, XRayRequest } from "@/@types/xray-request";
+import { RequestError, RequestResponse } from "@/@types/RequestResponse";
+import { validateExamRequest, ExamRequest } from "@/@types/ExamRequest";
 import { generatePDF } from "@/utils/generate-pdf";
 import { storeBlob } from "@/utils/store-blob";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest): Promise<NextResponse<RequestResponse<string> | RequestError>> {
 	const body = await request.json();
-	const { data: validationData, error: validationError } = validateXRayRequest(body);
+	const { data: validationData, error: validationError } = validateExamRequest(body);
 
 	if (validationError !== null) {
 		return NextResponse.json(validationError, { status: 400 });
 	}
 
-	const { data: pdfBuffer, error: pdfError } = await generatePDF(validationData as XRayRequest);
+	const { data: pdfBuffer, error: pdfError } = await generatePDF(validationData as ExamRequest);
 
 	if (pdfError !== null) {
 		return NextResponse.json(pdfError, { status: 500 });

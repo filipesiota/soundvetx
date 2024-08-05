@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { malformedBodyRequest, validateParam } from "@/utils/request";
-import { RequestError } from "@/@types/request-response";
-import { ComboReturn } from "@/@types/combo-return";
+import { RequestError } from "@/@types/RequestResponse";
+import { ComboReturn } from "@/@types/ComboReturn";
 
-export const XRayRequestSchema = z.object({
+export const ExamRequestSchema = z.object({
 	veterinarianClinic: z.string().trim().min(1, {
 		message: "Este campo é obrigatório."
 	}),
@@ -41,9 +41,9 @@ export const XRayRequestSchema = z.object({
 	observations: z.string().optional()
 });
 
-export type XRayRequest = z.infer<typeof XRayRequestSchema>;
+export type ExamRequest = z.infer<typeof ExamRequestSchema>;
 
-export function validateXRayRequest(data: any): ComboReturn<XRayRequest, RequestError> {
+export function validateExamRequest(data: any): ComboReturn<ExamRequest, RequestError> {
 	if (data === null || typeof data !== "object") {
 		return {
 			data: null,
@@ -166,7 +166,7 @@ export function validateXRayRequest(data: any): ComboReturn<XRayRequest, Request
 		};
 
 	return {
-		data: data as XRayRequest,
+		data: data as ExamRequest,
 		error: null
 	};
 }

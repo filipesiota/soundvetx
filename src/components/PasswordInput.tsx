@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/tailwind-utils";
 import { forwardRef, useState } from "react";
 import { Button } from "./ui/button";
 import { InputProps, Input } from "./ui/input";

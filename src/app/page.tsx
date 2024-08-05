@@ -5,18 +5,18 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { FormSection } from "@/components/form-section";
-import { FormGrid } from "@/components/form-grid";
+import { FormSection } from "@/components/FormSection";
+import { FormGrid } from "@/components/FormGrid";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MainTitle } from "@/components/main-title";
+import { MainTitle } from "@/components/MainTitle";
 import { toast } from "sonner";
-import { CheckboxItem } from "@/components/checkbox-item";
+import { CheckboxItem } from "@/components/CheckboxItem";
 import { useState } from "react";
-import { CheckboxOption } from "@/components/checkbox-item";
+import { CheckboxOption } from "@/components/CheckboxItem";
 import { Textarea } from "@/components/ui/textarea";
-import { XRayRequest, XRayRequestSchema } from "@/@types/xray-request";
+import { ExamRequest, ExamRequestSchema } from "@/@types/ExamRequest";
 import { sendRequest } from "@/utils/request";
-import { RequestError, RequestMessage } from "@/@types/request-response";
+import { RequestMessage } from "@/@types/RequestResponse";
 
 const softTissues: CheckboxOption[] = [
 	{ id: "chest", label: "Tórax" },
@@ -57,8 +57,8 @@ const combos: CheckboxOption[] = [
 export default function ExamRequestPage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const form = useForm<XRayRequest>({
-		resolver: zodResolver(XRayRequestSchema),
+	const form = useForm<ExamRequest>({
+		resolver: zodResolver(ExamRequestSchema),
 		defaultValues: {
 			veterinarianClinic: "",
 			veterinarianName: "",
@@ -79,7 +79,7 @@ export default function ExamRequestPage() {
 		}
 	});
 
-	async function onSubmit(values: XRayRequest) {
+	async function onSubmit(values: ExamRequest) {
 		setIsSubmitting(true);
 
 		try {

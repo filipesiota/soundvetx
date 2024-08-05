@@ -1,11 +1,10 @@
 "use client";
 
-import { brazilStates } from "@/@types/brazil-states";
-import { VeterinarianSchema, Veterinarian } from "@/@types/veterinarian";
-
-import { FormSection } from "@/components/form-section";
-import { MainTitle } from "@/components/main-title";
-import { PasswordInput } from "@/components/password-input";
+import { brazilStates } from "@/@types/FederativeUnit";
+import { VeterinarianSchema, Veterinarian } from "@/@types/Veterinarian";
+import { FormSection } from "@/components/FormSection";
+import { MainTitle } from "@/components/MainTitle";
+import { PasswordInput } from "@/components/PasswordInput";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -28,6 +27,7 @@ import {
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import Router from "next/router";
 
 export default function RegisterPage() {
 	const form = useForm<Veterinarian>({
@@ -42,8 +42,9 @@ export default function RegisterPage() {
 		}
 	});
 
-	async function onSubmit(values: Veterinarian) {
+	function onSubmit(values: Veterinarian) {
 		toast.success("Formulário processado com sucesso!");
+		Router.push("/login");
 	}
 
 	return (

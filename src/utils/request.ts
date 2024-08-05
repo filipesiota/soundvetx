@@ -1,5 +1,6 @@
-import { RequestError, RequestMessage, RequestResponse } from "@/@types/request-response";
-import { Request } from "@/@types/request";
+import { RequestError, RequestMessage, RequestResponse } from "@/@types/RequestResponse";
+import { Request } from "@/@types/Request";
+import { parseCookies } from "nookies";
 
 export function errParamRequired(param: string, type: string): RequestError {
 	return {
@@ -51,19 +52,23 @@ export function validateParam(object: any, param: string, type: string, required
 }
 
 export async function sendRequest({ url, method, data }: Request): Promise<RequestResponse<any>> {
+	const { "soundvetx-token": token } = parseCookies();
+	const authorization = token ? `Bearer ${token}` : "";
+
 	const response = await fetch(url, {
 		method,
 		headers: {
-			"Content-Type": "application/json"
+			"Content-Type": "application/json",
+			"Authorization": authorization
 		},
-		body: JSON.stringify(data)
+		body: JSON.stringify(data),
 	});
 
 	const responseData = await response.json();
 
 	if (response.ok) {
-		return responseData;
+		return responseData.data;
 	} else {
-		throw responseData.message as RequestMessage;
+		throw responseData.data.message as RequestMessage;
 	}
 }

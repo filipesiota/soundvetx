@@ -1,6 +1,6 @@
 import { malformedBodyRequest, validateParam } from "@/utils/request";
-import { ComboReturn } from "./combo-return";
-import { RequestError } from "./request-response";
+import { ComboReturn } from "./ComboReturn";
+import { RequestError } from "./RequestResponse";
 
 export type SendReportRequest = {
     veterinarianClinic: string;

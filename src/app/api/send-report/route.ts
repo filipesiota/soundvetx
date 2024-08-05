@@ -1,5 +1,5 @@
-import { RequestError, RequestResponse } from "@/@types/request-response";
-import { validateSendReportRequest } from "@/@types/send-report-request";
+import { RequestError, RequestResponse } from "@/@types/RequestResponse";
+import { validateSendReportRequest } from "@/@types/SendReportRequest";
 import { sendMessage } from "@/utils/wa-message-helper";
 import { NextRequest, NextResponse } from "next/server";
 

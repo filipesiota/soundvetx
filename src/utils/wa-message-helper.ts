@@ -1,5 +1,5 @@
-import { ComboReturn } from "@/@types/combo-return";
-import { RequestError } from "@/@types/request-response";
+import { ComboReturn } from "@/@types/ComboReturn";
+import { RequestError } from "@/@types/RequestResponse";
 import twilio from "twilio";
 
 export type SendMessageProps = {

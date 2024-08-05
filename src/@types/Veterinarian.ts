@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { ComboReturn } from "./combo-return";
+import { ComboReturn } from "./ComboReturn";
 import { malformedBodyRequest, validateParam } from "@/utils/request";
-import { RequestError } from "./request-response";
+import { RequestError } from "./RequestResponse";
 
 export const VeterinarianSchema = z.object({
     fullName: z.string().trim().min(1, {
@@ -83,3 +83,14 @@ export function validateVeterinarian(data: any): ComboReturn<Veterinarian, Reque
         error: null
     };
 }
+
+export type VeterinarianResponseData = {
+    user: {
+        id: number;
+        name: string;
+        email: string;
+        crmv: string;
+        uf: string;
+        canSendWhatsapp: boolean;
+    }
+};

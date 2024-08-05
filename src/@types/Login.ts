@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { ComboReturn } from "./combo-return";
+import { ComboReturn } from "./ComboReturn";
 import { malformedBodyRequest, validateParam } from "@/utils/request";
-import { RequestError } from "./request-response";
+import { RequestError, RequestResponse } from "./RequestResponse";
 
 export const LoginSchema = z.object({
     email: z.string().trim().min(1, {
@@ -45,3 +45,7 @@ export function validateLogin(data: any): ComboReturn<Login, RequestError> {
         error: null
     };
 }
+
+export type LoginResponseData = {
+    token: string;
+};

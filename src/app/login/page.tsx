@@ -1,18 +1,22 @@
 "use client";
 
-import { LoginSchema, Login } from "@/@types/login";
-import { FormSection } from "@/components/form-section";
-import { MainTitle } from "@/components/main-title";
-import { PasswordInput } from "@/components/password-input";
+import { LoginSchema, Login } from "@/@types/Login";
+import { FormSection } from "@/components/FormSection";
+import { MainTitle } from "@/components/MainTitle";
+import { PasswordInput } from "@/components/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import Router from "next/router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
+	const { signIn } = useAuth();
+
 	const form = useForm<Login>({
 		resolver: zodResolver(LoginSchema),
 		defaultValues: {
@@ -21,8 +25,9 @@ export default function LoginPage() {
 		}
 	});
 
-	async function onSubmit(values: Login) {
+	function onSubmit(values: Login) {
 		toast.success("Formulário processado com sucesso!");
+		Router.push("/");
 	}
 
 	return (

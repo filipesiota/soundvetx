@@ -1,10 +1,10 @@
 import * as puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
-import { ComboReturn } from "@/@types/combo-return";
-import { RequestError } from "@/@types/request-response";
+import { ComboReturn } from "@/@types/ComboReturn";
+import { RequestError } from "@/@types/RequestResponse";
 import { readFileSync } from "fs";
 import path from "path";
-import { XRayRequest } from "@/@types/xray-request";
+import { XRayRequest } from "@/@types/ExamRequest";
 
 function decorateTemplateContent(template: string, formData: XRayRequest): string {
 	const examItems: string[] = Array().concat(
