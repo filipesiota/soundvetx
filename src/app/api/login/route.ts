@@ -16,7 +16,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<RequestRe
     const authenticateUserUseCase = new AuthenticateUserUseCase();
 
     try {
-        const token = await authenticateUserUseCase.execute({ email, password });
+        const { token, user } = await authenticateUserUseCase.execute({ email, password });
 
         return NextResponse.json({
             message: {
@@ -24,7 +24,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<RequestRe
                 clientMessage: "Usuário autenticado com sucesso."
             },
             data: {
-                token
+                token,
+                user
             }
         }, { status: 200 });
     } catch (error: any) {

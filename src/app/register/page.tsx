@@ -26,10 +26,13 @@ import {
 } from "@/components/ui/select";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import Router from "next/router";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLoading } from "@/contexts/LoadingContext";
 
 export default function RegisterPage() {
+	const { isLoading, setIsLoading } = useLoading();
+	const { signUp } = useAuth();
+
 	const form = useForm<Veterinarian>({
 		resolver: zodResolver(VeterinarianSchema),
 		defaultValues: {
@@ -42,9 +45,10 @@ export default function RegisterPage() {
 		}
 	});
 
-	function onSubmit(values: Veterinarian) {
-		toast.success("Formulário processado com sucesso!");
-		Router.push("/login");
+	async function onSubmit(values: Veterinarian) {
+		setIsLoading(true);
+		await signUp(values);
+		setIsLoading(false);
 	}
 
 	return (
@@ -166,7 +170,7 @@ export default function RegisterPage() {
 						/>
 					</FormSection>
 
-					<Button type="submit">Cadastrar</Button>
+					<Button type="submit" disabled={isLoading}>Cadastrar</Button>
 
 					<div className="text-center">
 						Já possui uma conta? <Link href="/login">Faça seu login!</Link>

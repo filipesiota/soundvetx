@@ -9,25 +9,31 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import Router from "next/router";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSearchParams } from "next/navigation";
+import { useLoading } from "@/contexts/LoadingContext";
 
 export default function LoginPage() {
+	const searchParams = useSearchParams();
+	const email = searchParams.get("email");
+	const password = searchParams.get("password");
+
+	const { isLoading, setIsLoading } = useLoading();
 	const { signIn } = useAuth();
 
 	const form = useForm<Login>({
 		resolver: zodResolver(LoginSchema),
 		defaultValues: {
-			email: "",
-			password: ""
+			email: email ?? "",
+			password: password ?? ""
 		}
 	});
 
-	function onSubmit(values: Login) {
-		toast.success("Formulário processado com sucesso!");
-		Router.push("/");
+	async function onSubmit(values: Login) {
+		setIsLoading(true);
+		await signIn(values);
+		setIsLoading(false);
 	}
 
 	return (
@@ -66,7 +72,7 @@ export default function LoginPage() {
 						/>
 					</FormSection>
 
-					<Button type="submit">Entrar</Button>
+					<Button type="submit" disabled={isLoading}>Entrar</Button>
 
                     <div className="text-center">
                         Não possui uma conta? <Link href="/register">Cadastre uma agora!</Link>

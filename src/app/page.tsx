@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ExamRequest, ExamRequestSchema } from "@/@types/ExamRequest";
 import { sendRequest } from "@/utils/request";
 import { RequestMessage } from "@/@types/RequestResponse";
+import { useLoading } from "@/contexts/LoadingContext";
 
 const softTissues: CheckboxOption[] = [
 	{ id: "chest", label: "Tórax" },
@@ -55,7 +56,7 @@ const combos: CheckboxOption[] = [
 ];
 
 export default function ExamRequestPage() {
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const { isLoading, setIsLoading } = useLoading();
 
 	const form = useForm<ExamRequest>({
 		resolver: zodResolver(ExamRequestSchema),
@@ -80,7 +81,7 @@ export default function ExamRequestPage() {
 	});
 
 	async function onSubmit(values: ExamRequest) {
-		setIsSubmitting(true);
+		setIsLoading(true);
 
 		try {
 			const { message, data } = await sendRequest({
@@ -89,15 +90,13 @@ export default function ExamRequestPage() {
 				data: values
 			});
 
-			console.log(data);
-
 			toast.success(message.clientMessage);
 		} catch (error: any) {
 			const { serverMessage, clientMessage } = error as RequestMessage;
 			console.error(serverMessage);
 			toast.error(clientMessage);
 		} finally {
-			setIsSubmitting(false);
+			setIsLoading(false);
 		}
 	}
 
@@ -366,7 +365,7 @@ export default function ExamRequestPage() {
 						<FormDescription className="text-center">*Os exames de imagem devem ser correlacionados com a Clínica do paciente e demais exames complementares.</FormDescription>
 					</FormSection>
 
-					<Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Enviando...' : 'Enviar'}</Button>
+					<Button type="submit" disabled={isLoading}>Enviar</Button>
 				</form>
 			</Form>
 		</main>

@@ -3,19 +3,23 @@ import { RequestMessage } from "@/@types/RequestResponse";
 import { sendRequest } from "@/utils/request";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { parseCookies, setCookie } from "nookies";
+import { parseCookies, setCookie, destroyCookie } from "nookies";
 import { User } from "@/@types/User";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
+import { Veterinarian } from "@/@types/Veterinarian";
 
 export type AuthContextType = {
 	isAuthenticated: boolean;
     user: User | null;
     signIn: (login: Login) => Promise<void>;
+    signUp: (veterinarian: Veterinarian) => Promise<void>;
+    signOut: () => void;
 };
 
 export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+    const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
 	const isAuthenticated = !!user;
 
@@ -29,6 +33,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }).then(response => setUser(response.data));
         }
     }, []);
+
+    async function signUp({ fullName, crmv, uf, email, password, confirmPassword }: Veterinarian) {
+        try {
+			const { message } = await sendRequest({
+				url: "/api/users",
+				method: "POST",
+				data: {
+                    fullName,
+                    crmv,
+                    uf,
+                    email,
+                    password,
+                    confirmPassword
+                }
+			});
+
+			toast.success(message.clientMessage);
+			router.push(`/login?email=${email}&password=${password}`);
+		} catch (error: any) {
+			const { serverMessage, clientMessage } = error as RequestMessage;
+			console.error(serverMessage);
+			toast.error(clientMessage);
+		}
+    }
 
     async function signIn({ email, password }: Login) {
         try {
@@ -49,9 +77,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             setUser(user);
 
-            Router.push("/");
-
             toast.success(message.clientMessage);
+            router.push("/");
         } catch (error: any) {
             const { serverMessage, clientMessage } = error as RequestMessage;
 			console.error(serverMessage);
@@ -59,7 +86,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-	return <AuthContext.Provider value={{ isAuthenticated, user, signIn }}>{children}</AuthContext.Provider>;
+    async function signOut() {
+        destroyCookie(undefined, "soundvetx-token");
+        setUser(null);
+        router.push("/login");
+    }
+
+	return <AuthContext.Provider value={{ isAuthenticated, user, signUp, signIn, signOut }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

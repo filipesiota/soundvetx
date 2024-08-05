@@ -67,8 +67,8 @@ export async function sendRequest({ url, method, data }: Request): Promise<Reque
 	const responseData = await response.json();
 
 	if (response.ok) {
-		return responseData.data;
+		return responseData;
 	} else {
-		throw responseData.data.message as RequestMessage;
+		throw responseData.message as RequestMessage;
 	}
 }

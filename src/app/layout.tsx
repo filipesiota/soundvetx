@@ -3,6 +3,7 @@ import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/utils/tailwind-utils";
 import { Toaster } from "@/components/ui/sonner";
 import "../styles/globals.css";
+import { Providers } from "./providers";
 
 const fontSans = FontSans({
 	subsets: ["latin"],
@@ -24,10 +25,17 @@ export default function RootLayout({
 			<head>
 				<link rel="icon" href="/favicon.ico" sizes="any" />
 			</head>
-			<body className={cn("min-h-dvh bg-background font-sans antialiased h-full px-4", fontSans.variable)}>
-				{children}
+			<body
+				className={cn(
+					"min-h-dvh bg-background font-sans antialiased h-full px-4",
+					fontSans.variable
+				)}
+			>
+				<Providers>
+					{children}
 
-				<Toaster />
+					<Toaster />
+				</Providers>
 			</body>
 		</html>
 	);

@@ -8,6 +8,9 @@ export class AuthenticateUserUseCase {
 		const user = await prisma.user.findFirst({
 			where: {
 				email
+			},
+			include: {
+				veterinarian: true
 			}
 		});
 
@@ -42,6 +45,16 @@ export class AuthenticateUserUseCase {
 			} as SignOptions
 		);
 
-		return token;
+		return {
+			token,
+			user: {
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				crmv: user.veterinarian[0].crmv,
+				uf: user.veterinarian[0].uf,
+				canSendWhatsapp: user.canSendWhatsapp
+			}
+		}
 	}
 }
