@@ -1,6 +1,5 @@
 import { Secret, verify } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
-import { parseCookies } from "nookies";
 
 export const config = {
 	matcher: [
@@ -17,9 +16,10 @@ export const config = {
 
 export function middleware(request: NextRequest) {
 	const pathName = request.nextUrl.pathname;
+	const method = request.method;
 
 	if (pathName.includes("/api")) {
-		if (pathName.includes("/login") || pathName.includes("/register")) {
+		if (pathName.includes("/login") || ( pathName.includes("/users") && method === "POST" )) {
 			return NextResponse.next();
 		}
 
