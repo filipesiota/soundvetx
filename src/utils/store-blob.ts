@@ -1,5 +1,5 @@
 import { ComboReturn } from "@/@types/ComboReturn";
-import { RequestError } from "@/@types/RequestResponse";
+import { RequestError } from "@/@types/Request";
 import { put } from "@vercel/blob";
 
 export async function storeBlob(file: Blob): Promise<ComboReturn<string, RequestError>> {

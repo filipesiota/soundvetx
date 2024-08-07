@@ -19,11 +19,16 @@ export function middleware(request: NextRequest) {
 	const method = request.method;
 
 	if (pathName.includes("/api")) {
-		if (pathName.includes("/login") || ( pathName.includes("/users") && method === "POST" )) {
+		if (pathName.includes("/login") ||
+			pathName.includes("/refresh-token") ||
+			(pathName.includes("/users") && method === "POST")
+		) {
 			return NextResponse.next();
 		}
 
 		const authToken = request.headers.get("Authorization");
+
+		console.log(authToken);
 
 		if (!authToken) {
 			return NextResponse.json({ message: {
@@ -46,7 +51,7 @@ export function middleware(request: NextRequest) {
 		}
 	}
 
-	const token = request.cookies.get("soundvetx-token");
+	const token = localStorage.getItem("soundvetx-token");
 
 	if (!token) {
 		return NextResponse.redirect(new URL("/login", request.url));

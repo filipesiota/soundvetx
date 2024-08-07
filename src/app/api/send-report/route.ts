@@ -1,9 +1,9 @@
-import { RequestError, RequestResponse } from "@/@types/RequestResponse";
-import { validateSendReportRequest } from "@/@types/SendReportRequest";
+import { RequestError, RequestResponse } from "@/@types/Request";
+import { validateSendReportRequest } from "@/@types/SendReport";
 import { sendMessage } from "@/utils/wa-message-helper";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest): Promise<NextResponse<RequestResponse<null> | RequestError>> {
+export async function POST(request: NextRequest): Promise<NextResponse<RequestResponse<boolean> | RequestError>> {
 	const body = await request.json();
 	const { data: validationData, error: validationError } = validateSendReportRequest(body);
 
@@ -29,5 +29,5 @@ export async function POST(request: NextRequest): Promise<NextResponse<RequestRe
 	return NextResponse.json({ message: {
 		serverMessage: "Report sent successfully",
 		clientMessage: "Exame enviado com sucesso."
-	}, data: null }, { status: 200 });
+	}, data: true }, { status: 200 });
 }

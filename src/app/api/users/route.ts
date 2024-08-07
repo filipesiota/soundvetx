@@ -1,6 +1,6 @@
-import { RequestResponse, RequestError } from "@/@types/RequestResponse";
+import { RequestResponse, RequestError } from "@/@types/Request";
 import { validateVeterinarian, Veterinarian, VeterinarianResponseData } from "@/@types/Veterinarian";
-import { CreateUserUseCase } from "@/useCases/createUserUseCase/CreateUserUseCase";
+import { CreateUserUseCase } from "@/useCases/createUser/CreateUserUseCase";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest): Promise<NextResponse<RequestResponse<VeterinarianResponseData> | RequestError>> {

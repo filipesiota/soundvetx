@@ -1,7 +1,7 @@
 import { Login, LoginResponseData, validateLogin } from "@/@types/Login";
 import { NextRequest, NextResponse } from "next/server";
 import { AuthenticateUserUseCase } from "@/useCases/authenticateUser/AuthenticateUserUseCase";
-import { RequestError, RequestResponse } from "@/@types/RequestResponse";
+import { RequestError, RequestResponse } from "@/@types/Request";
 
 export async function POST(request: NextRequest): Promise<NextResponse<RequestResponse<LoginResponseData> | RequestError>> {
     const body = await request.json();
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<RequestRe
     const authenticateUserUseCase = new AuthenticateUserUseCase();
 
     try {
-        const { token, user } = await authenticateUserUseCase.execute({ email, password });
+        const { token, refreshToken, user } = await authenticateUserUseCase.execute({ email, password });
 
         return NextResponse.json({
             message: {
@@ -25,6 +25,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<RequestRe
             },
             data: {
                 token,
+                refreshToken,
                 user
             }
         }, { status: 200 });

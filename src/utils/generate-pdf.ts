@@ -1,7 +1,7 @@
 import * as puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 import { ComboReturn } from "@/@types/ComboReturn";
-import { RequestError } from "@/@types/RequestResponse";
+import { RequestError } from "@/@types/Request";
 import { readFileSync } from "fs";
 import path from "path";
 import { XRayRequest } from "@/@types/ExamRequest";

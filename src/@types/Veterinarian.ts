@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ComboReturn } from "./ComboReturn";
 import { malformedBodyRequest, validateParam } from "@/utils/request";
-import { RequestError } from "./RequestResponse";
+import { RequestError } from "./Request";
 
 export const VeterinarianSchema = z.object({
     fullName: z.string().trim().min(1, {

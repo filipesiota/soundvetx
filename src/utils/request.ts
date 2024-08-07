@@ -1,6 +1,5 @@
-import { RequestError, RequestMessage, RequestResponse } from "@/@types/RequestResponse";
+import { RequestError, RequestMessage, RequestResponse } from "@/@types/Request";
 import { Request } from "@/@types/Request";
-import { parseCookies } from "nookies";
 
 export function errParamRequired(param: string, type: string): RequestError {
 	return {
@@ -52,7 +51,7 @@ export function validateParam(object: any, param: string, type: string, required
 }
 
 export async function sendRequest({ url, method, data }: Request): Promise<RequestResponse<any>> {
-	const { "soundvetx-token": token } = parseCookies();
+	const token = localStorage.getItem("soundvetx-token");
 	const authorization = token ? `Bearer ${token}` : "";
 
 	const response = await fetch(url, {
@@ -64,10 +63,39 @@ export async function sendRequest({ url, method, data }: Request): Promise<Reque
 		body: JSON.stringify(data),
 	});
 
+	if (response.status === 401) {
+		try {
+			await sendRefreshTokenRequest();
+			return sendRequest({ url, method, data });
+		} catch (error: any) {
+			throw error as RequestMessage;
+		}
+	}
+
 	const responseData = await response.json();
 
 	if (response.ok) {
 		return responseData;
+	} else {
+		throw responseData.message as RequestMessage;
+	}
+}
+
+async function sendRefreshTokenRequest(): Promise<void> {
+	const refreshToken = localStorage.getItem("soundvetx-refresh-token");
+
+	const response = await fetch("/api/refresh-token", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({ refreshToken })
+	});
+
+	const responseData = await response.json();
+
+	if (response.ok) {
+		localStorage.setItem("soundvetx-token", responseData.token);
 	} else {
 		throw responseData.message as RequestMessage;
 	}

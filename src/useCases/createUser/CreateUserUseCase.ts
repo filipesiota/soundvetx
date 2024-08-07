@@ -71,7 +71,8 @@ export class CreateUserUseCase {
 			email: veterinarian.user.email,
 			crmv: veterinarian.crmv,
 			uf: veterinarian.uf,
-			canSendWhatsapp: veterinarian.user.canSendWhatsapp
+			canSendWhatsapp: veterinarian.user.canSendWhatsapp,
+			type: veterinarian.user.type
 		};
 	}
 }

@@ -1,5 +1,7 @@
 import { Login } from "@/@types/Login";
 import { prisma } from "@/prisma/client";
+import { GenerateRefreshTokenProvider } from "@/providers/GenerateRefreshTokenProvider";
+import { GenerateTokenProvider } from "@/providers/GenerateTokenProvider";
 import { compare } from "bcrypt";
 import { Secret, sign, SignOptions } from "jsonwebtoken";
 
@@ -34,26 +36,29 @@ export class AuthenticateUserUseCase {
 			};
 		}
 
-		const token = sign(
-			{
-				id: user.id
-			},
-			process.env.JWT_SECRET as Secret,
-			{
-				subject: user.id.toString(),
-				expiresIn: "1d"
-			} as SignOptions
-		);
+		const generateToken = new GenerateTokenProvider();
+		const token = await generateToken.execute(user.id);
+
+		await prisma.refreshToken.deleteMany({
+			where: {
+				userId: user.id
+			}
+		});
+
+		const generateRefreshToken = new GenerateRefreshTokenProvider();
+		const refreshToken = await generateRefreshToken.execute(user.id);
 
 		return {
 			token,
+			refreshToken: refreshToken.id,
 			user: {
 				id: user.id,
 				name: user.name,
 				email: user.email,
-				crmv: user.veterinarian[0].crmv,
-				uf: user.veterinarian[0].uf,
-				canSendWhatsapp: user.canSendWhatsapp
+				crmv: user.veterinarian?.crmv,
+				uf: user.veterinarian?.uf,
+				canSendWhatsapp: user.canSendWhatsapp,
+				type: user.type
 			}
 		}
 	}

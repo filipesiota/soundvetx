@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { malformedBodyRequest, validateParam } from "@/utils/request";
-import { RequestError } from "@/@types/RequestResponse";
+import { RequestError } from "@/@types/Request";
 import { ComboReturn } from "@/@types/ComboReturn";
 
 export const ExamRequestSchema = z.object({

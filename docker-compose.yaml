@@ -1,19 +1,6 @@
 name: soundvetx
 
 services:
-  app:
-    image: soundvetx-app:latest
-    volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/.next
-    ports:
-      - 3000:3000
-    depends_on:
-      - db
-    networks:
-      - soundvetx-network
-
   db:
     image: postgres:latest
     restart: unless-stopped

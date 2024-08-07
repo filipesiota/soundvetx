@@ -16,7 +16,7 @@ import { CheckboxOption } from "@/components/CheckboxItem";
 import { Textarea } from "@/components/ui/textarea";
 import { ExamRequest, ExamRequestSchema } from "@/@types/ExamRequest";
 import { sendRequest } from "@/utils/request";
-import { RequestMessage } from "@/@types/RequestResponse";
+import { RequestMessage } from "@/@types/Request";
 import { useLoading } from "@/contexts/LoadingContext";
 
 const softTissues: CheckboxOption[] = [

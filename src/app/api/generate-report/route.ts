@@ -1,10 +1,16 @@
-import { RequestError, RequestResponse } from "@/@types/RequestResponse";
+import { RequestError, RequestResponse } from "@/@types/Request";
 import { validateExamRequest, ExamRequest } from "@/@types/ExamRequest";
 import { generatePDF } from "@/utils/generate-pdf";
 import { storeBlob } from "@/utils/store-blob";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest): Promise<NextResponse<RequestResponse<string> | RequestError>> {
+	return NextResponse.json({ message: {
+		serverMessage: "Report generated successfully",
+		clientMessage: "Arquivo do exame gerado com sucesso."
+	}, data: "blobUrl" }, { status: 200 });
+
+
 	const body = await request.json();
 	const { data: validationData, error: validationError } = validateExamRequest(body);
 

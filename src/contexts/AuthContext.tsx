@@ -1,12 +1,12 @@
-import { Login } from "@/@types/Login";
-import { RequestMessage } from "@/@types/RequestResponse";
+import { Login, LoginResponseData } from "@/@types/Login";
+import { RequestMessage } from "@/@types/Request";
 import { sendRequest } from "@/utils/request";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { parseCookies, setCookie, destroyCookie } from "nookies";
 import { User } from "@/@types/User";
 import { useRouter } from "next/navigation";
 import { Veterinarian } from "@/@types/Veterinarian";
+import { setCookie } from "nookies";
 
 export type AuthContextType = {
 	isAuthenticated: boolean;
@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const isAuthenticated = !!user;
 
     useEffect(() => {
-        const { 'soundvetx-token': token } = parseCookies();
+        const token = localStorage.getItem("soundvetx-token");
 
         if (token) {
             sendRequest({
@@ -69,11 +69,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 }
             });
 
-            const { token, user } = data;
+            const { token, refreshToken, user } = data as LoginResponseData;
 
+            
             setCookie(undefined, "soundvetx-token", token, {
                 maxAge: 60 * 60 * 24 // 1 day,
             });
+
+            localStorage.setItem("soundvetx-token", token);
+            localStorage.setItem("soundvetx-refresh-token", refreshToken);
 
             setUser(user);
 
@@ -87,7 +91,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     async function signOut() {
-        destroyCookie(undefined, "soundvetx-token");
+        localStorage.removeItem("soundvetx-token");
+        localStorage.removeItem("soundvetx-refresh-token");
         setUser(null);
         router.push("/login");
     }

@@ -2,8 +2,8 @@ export type User = {
     id: number;
     name: string;
     email: string;
-    crmv?: string;
-    uf?: string;
+    crmv: string | undefined;
+    uf: string | undefined;
     canSendWhatsapp: boolean;
-    type: "admin" | "veterinarian";
+    type: string;
 };
