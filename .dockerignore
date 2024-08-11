@@ -1,8 +1,0 @@
-/node_modules
-/.vercel
-/.next
-.env.development.local
-.env.example
-.prettierrc
-.prettierignore
-prettier.config.js

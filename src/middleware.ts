@@ -1,5 +1,5 @@
-import { Secret, verify } from "jsonwebtoken";
-import { NextRequest, NextResponse } from "next/server";
+import { Secret, verify } from "jsonwebtoken"
+import { NextRequest, NextResponse } from "next/server"
 
 export const config = {
 	matcher: [
@@ -12,50 +12,59 @@ export const config = {
 		 */
 		"/((?!login|register|_next/static|_next/image|favicon.ico).*)"
 	]
-};
+}
 
 export function middleware(request: NextRequest) {
-	const pathName = request.nextUrl.pathname;
-	const method = request.method;
+	const pathName = request.nextUrl.pathname
+	const method = request.method
 
 	if (pathName.includes("/api")) {
-		if (pathName.includes("/login") ||
+		if (
+			pathName.includes("/login") ||
 			pathName.includes("/refresh-token") ||
 			(pathName.includes("/users") && method === "POST")
 		) {
-			return NextResponse.next();
+			return NextResponse.next()
 		}
 
-		const authToken = request.headers.get("Authorization");
-
-		console.log(authToken);
+		const authToken = request.headers.get("Authorization")
 
 		if (!authToken) {
-			return NextResponse.json({ message: {
-				serverMessage: "User is not authenticated",
-				clientMessage: "Você não tem permissão para acessar este recurso."
-			} }, { status: 401 });
+			return NextResponse.json(
+				{
+					message: {
+						serverMessage: "User is not authenticated",
+						clientMessage: "Você não tem permissão para acessar este recurso."
+					}
+				},
+				{ status: 401 }
+			)
 		}
 
-		const [, token] = authToken.split(" ");
+		const [, token] = authToken.split(" ")
 
 		try {
-			verify(token, process.env.JWT_SECRET as Secret);
+			verify(token, process.env.JWT_SECRET as Secret)
 
-			return NextResponse.next();
+			return NextResponse.next()
 		} catch (error: any) {
-			return NextResponse.json({ message: {
-				serverMessage: "Unauthorized access",
-				clientMessage: "Você não tem permissão para acessar este recurso."
-			} }, { status: 401 });
+			return NextResponse.json(
+				{
+					message: {
+						serverMessage: "Unauthorized access",
+						clientMessage: "Você não tem permissão para acessar este recurso."
+					}
+				},
+				{ status: 401 }
+			)
 		}
 	}
 
-	const token = localStorage.getItem("soundvetx-token");
+	const token = request.cookies.get("soundvetx-token")
 
-	if (!token) {
-		return NextResponse.redirect(new URL("/login", request.url));
+	if (!token?.value) {
+		return NextResponse.redirect(new URL("/login", request.url))
 	}
 
-	return NextResponse.next();
+	return NextResponse.next()
 }

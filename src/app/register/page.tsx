@@ -1,11 +1,10 @@
-"use client";
+"use client"
 
-import { brazilStates } from "@/@types/FederativeUnit";
-import { VeterinarianSchema, Veterinarian } from "@/@types/Veterinarian";
-import { FormSection } from "@/components/FormSection";
-import { MainTitle } from "@/components/MainTitle";
-import { PasswordInput } from "@/components/PasswordInput";
-import { Button } from "@/components/ui/button";
+import { VeterinarianSchema, Veterinarian } from "@/schemas/veterinarian-schema"
+import { FormSection } from "@/components/form-section"
+import { MainTitle } from "@/components/main-title"
+import { PasswordInput } from "@/components/password-input"
+import { Button } from "@/components/ui/button"
 import {
 	Form,
 	FormField,
@@ -14,41 +13,42 @@ import {
 	FormControl,
 	FormMessage,
 	FormDescription
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { zodResolver } from "@hookform/resolvers/zod"
 import {
 	Select,
 	SelectTrigger,
 	SelectContent,
 	SelectItem,
 	SelectValue
-} from "@/components/ui/select";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { useAuth } from "@/contexts/AuthContext";
-import { useLoading } from "@/contexts/LoadingContext";
+} from "@/components/ui/select"
+import Link from "next/link"
+import { useForm } from "react-hook-form"
+import { useAuth } from "@/contexts/auth-context"
+import { useLoading } from "@/contexts/loading-context"
+import { federativeUnits } from "@/utils/options"
 
 export default function RegisterPage() {
-	const { isLoading, setIsLoading } = useLoading();
-	const { signUp } = useAuth();
+	const { isLoading, setIsLoading } = useLoading()
+	const { signUp } = useAuth()
 
 	const form = useForm<Veterinarian>({
 		resolver: zodResolver(VeterinarianSchema),
 		defaultValues: {
 			fullName: "",
 			crmv: "",
-            uf: "",
+			uf: "",
 			email: "",
 			password: "",
 			confirmPassword: ""
 		}
-	});
+	})
 
 	async function onSubmit(values: Veterinarian) {
-		setIsLoading(true);
-		await signUp(values);
-		setIsLoading(false);
+		setIsLoading(true)
+		await signUp(values)
+		setIsLoading(false)
 	}
 
 	return (
@@ -111,12 +111,12 @@ export default function RegisterPage() {
 												<SelectValue placeholder="" />
 											</SelectTrigger>
 											<SelectContent>
-												{brazilStates.map(state => (
+												{federativeUnits.map(item => (
 													<SelectItem
-														key={state.abbreviation}
-														value={`${state.name} (${state.abbreviation})`}
+														key={item.abbreviation}
+														value={`${item.name} (${item.abbreviation})`}
 													>
-														{state.name} ({state.abbreviation})
+														{item.name} ({item.abbreviation})
 													</SelectItem>
 												))}
 											</SelectContent>
@@ -170,7 +170,9 @@ export default function RegisterPage() {
 						/>
 					</FormSection>
 
-					<Button type="submit" disabled={isLoading}>Cadastrar</Button>
+					<Button type="submit" disabled={isLoading}>
+						Cadastrar
+					</Button>
 
 					<div className="text-center">
 						Já possui uma conta? <Link href="/login">Faça seu login!</Link>
@@ -178,5 +180,5 @@ export default function RegisterPage() {
 				</form>
 			</Form>
 		</main>
-	);
+	)
 }

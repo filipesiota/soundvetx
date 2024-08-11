@@ -1,24 +1,24 @@
-import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
-import { cn } from "@/utils/tailwind-utils";
-import { Toaster } from "@/components/ui/sonner";
-import "../styles/globals.css";
-import { Providers } from "./providers";
+import type { Metadata } from "next"
+import { Inter as FontSans } from "next/font/google"
+import { cn } from "@/utils/tailwind-utils"
+import { Toaster } from "@/components/ui/sonner"
+import "../styles/globals.css"
+import { Providers } from "./providers"
 
 const fontSans = FontSans({
 	subsets: ["latin"],
 	variable: "--font-sans"
-});
+})
 
 export const metadata: Metadata = {
 	title: "SoundvetX",
 	description: "Radiologia em animais de companhia e pets exóticos"
-};
+}
 
 export default function RootLayout({
 	children
 }: Readonly<{
-	children: React.ReactNode;
+	children: React.ReactNode
 }>) {
 	return (
 		<html lang="pt-BR">
@@ -38,5 +38,5 @@ export default function RootLayout({
 				</Providers>
 			</body>
 		</html>
-	);
+	)
 }

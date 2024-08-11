@@ -1,62 +1,39 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { FormSection } from "@/components/FormSection";
-import { FormGrid } from "@/components/FormGrid";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MainTitle } from "@/components/MainTitle";
-import { toast } from "sonner";
-import { CheckboxItem } from "@/components/CheckboxItem";
-import { useState } from "react";
-import { CheckboxOption } from "@/components/CheckboxItem";
-import { Textarea } from "@/components/ui/textarea";
-import { ExamRequest, ExamRequestSchema } from "@/@types/ExamRequest";
-import { sendRequest } from "@/utils/request";
-import { RequestMessage } from "@/@types/Request";
-import { useLoading } from "@/contexts/LoadingContext";
-
-const softTissues: CheckboxOption[] = [
-	{ id: "chest", label: "Tórax" },
-	{ id: "abdomen", label: "Abdômen" }
-];
-
-const skullItems: CheckboxOption[] = [
-	{ id: "mandible", label: "Mandíbula" },
-	{ id: "jaw", label: "Maxilar" },
-	{ id: "tympanicBullae", label: "Bulas Timpânicas" }
-];
-
-const axialSkeletonItems: CheckboxOption[] = [
-	{ id: "cervical", label: "Coluna Cervical" },
-	{ id: "thoracic", label: "Coluna Torácica" },
-	{ id: "lumbar", label: "Coluna Lombar" },
-	{ id: "cervicothoracic", label: "Cervico Torácica" },
-	{ id: "thoracolumbar", label: "Tóraco-lombar" },
-	{ id: "lumbosacral", label: "Lombossacral" },
-	{ id: "tail", label: "Cauda" }
-];
-
-const appendicularSkeletonItems: CheckboxOption[] = [
-	{ id: "rightThoracicLimb", label: "Membro Torácico Direito" },
-	{ id: "leftThoracicLimb", label: "Membro Torácico Esquerdo" },
-	{ id: "rightPelvicLimb", label: "Membro Pélvico Direito" },
-	{ id: "leftPelvicLimb", label: "Membro Pélvico Esquerdo" },
-	{ id: "postTraumaPelvis", label: 'Pelve "Pós-Trauma"' },
-	{ id: "dysplasiaControlPelvis", label: 'Pelve "Controle Displasia"' }
-];
-
-const combos: CheckboxOption[] = [
-	{ id: "preSurgical", label: "Pré-cirúrgico (RX tórax e US abdominal)" },
-	{ id: "metastases", label: "Pesquisa de metástases (RX tórax e US abdominal)" },
-	{ id: "postTrauma", label: "Pós trauma (RX e US abdominal)" }
-];
+import { Button } from "@/components/ui/button"
+import {
+	Form,
+	FormControl,
+	FormDescription,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { FormSection } from "@/components/form-section"
+import { FormGrid } from "@/components/form-grid"
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue
+} from "@/components/ui/select"
+import { MainTitle } from "@/components/main-title"
+import { CheckboxItem } from "@/components/checkbox-item"
+import { Textarea } from "@/components/ui/textarea"
+import { useLoading } from "@/contexts/loading-context"
+import { generateExamRequest } from "@/http/generate-exam-request"
+import { ExamRequest, ExamRequestSchema } from "@/schemas/exam-request-schema"
+import { softTissues, skullItems, axialSkeletonItems, appendicularSkeletonItems, combos } from "@/utils/options"
+import { toast } from "sonner"
+import { RequestMessage } from "@/types/request"
 
 export default function ExamRequestPage() {
-	const { isLoading, setIsLoading } = useLoading();
+	const { isLoading, setIsLoading } = useLoading()
 
 	const form = useForm<ExamRequest>({
 		resolver: zodResolver(ExamRequestSchema),
@@ -78,34 +55,38 @@ export default function ExamRequestPage() {
 			combos: [],
 			observations: ""
 		}
-	});
+	})
 
 	async function onSubmit(values: ExamRequest) {
-		setIsLoading(true);
+		setIsLoading(true)
 
 		try {
-			const { message, data } = await sendRequest({
-				url: "/api/generate-report",
-				method: "POST",
-				data: values
-			});
-
-			toast.success(message.clientMessage);
+			const { message, data } = await generateExamRequest(values)
+	
+			console.log(data.url)
+	
+			toast.success(message.clientMessage)
 		} catch (error: any) {
-			const { serverMessage, clientMessage } = error as RequestMessage;
-			console.error(serverMessage);
-			toast.error(clientMessage);
+			const { serverMessage, clientMessage } = error as RequestMessage
+			console.error(serverMessage)
+			toast.error(clientMessage)
 		} finally {
-			setIsLoading(false);
-		}
+			setIsLoading(false)
+		}		
 	}
 
 	return (
 		<main className="flex flex-col items-center w-full max-w-screen-md mx-auto py-8">
-			<MainTitle title="SoundvetX" subtitle="Radiologia em animais de companhia e pets exóticos" />
+			<MainTitle
+				title="SoundvetX"
+				subtitle="Radiologia em animais de companhia e pets exóticos"
+			/>
 
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col w-full gap-8 mt-10">
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className="flex flex-col w-full gap-8 mt-10"
+				>
 					<FormSection title="Dados do Requerente">
 						<FormGrid cols={2}>
 							<FormField
@@ -175,7 +156,10 @@ export default function ExamRequestPage() {
 									<FormItem>
 										<FormLabel>Sexo</FormLabel>
 										<FormControl>
-											<Select onValueChange={field.onChange} defaultValue={field.value}>
+											<Select
+												onValueChange={field.onChange}
+												defaultValue={field.value}
+											>
 												<SelectTrigger>
 													<SelectValue placeholder="" />
 												</SelectTrigger>
@@ -273,8 +257,13 @@ export default function ExamRequestPage() {
 									<FormItem>
 										<FormLabel>Tecidos moles</FormLabel>
 										<div className="grid grid-cols-1 gap-2 items-top">
-											{softTissues.map(softTissue => (
-												<CheckboxItem key={softTissue.id} name="softTissues" formControl={form.control} option={softTissue} />
+											{softTissues.map(item => (
+												<CheckboxItem
+													key={item.id}
+													name="softTissues"
+													formControl={form.control}
+													option={item}
+												/>
 											))}
 										</div>
 										<FormMessage />
@@ -289,11 +278,19 @@ export default function ExamRequestPage() {
 									<FormItem>
 										<FormLabel>Crânio</FormLabel>
 										<div className="grid grid-cols-2 gap-2 items-top">
-											{skullItems.map(skullItem => (
-												<CheckboxItem key={skullItem.id} name="skullItems" formControl={form.control} option={skullItem} />
+											{skullItems.map(item => (
+												<CheckboxItem
+													key={item.id}
+													name="skullItems"
+													formControl={form.control}
+													option={item}
+												/>
 											))}
 										</div>
-										<FormDescription>*Exames com necessidade de sedação para melhor posicionamento.</FormDescription>
+										<FormDescription>
+											*Exames com necessidade de sedação para melhor
+											posicionamento.
+										</FormDescription>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -306,8 +303,13 @@ export default function ExamRequestPage() {
 									<FormItem>
 										<FormLabel>Esqueleto Axial</FormLabel>
 										<div className="grid grid-cols-2 gap-2 items-top">
-											{axialSkeletonItems.map(axialSkeletonItem => (
-												<CheckboxItem key={axialSkeletonItem.id} name="axialSkeletonItems" formControl={form.control} option={axialSkeletonItem} />
+											{axialSkeletonItems.map(item => (
+												<CheckboxItem
+													key={item.id}
+													name="axialSkeletonItems"
+													formControl={form.control}
+													option={item}
+												/>
 											))}
 										</div>
 										<FormMessage />
@@ -322,9 +324,15 @@ export default function ExamRequestPage() {
 									<FormItem>
 										<FormLabel>Esqueleto Apendicular</FormLabel>
 										<div className="grid grid-cols-1 gap-2 items-top">
-											{appendicularSkeletonItems.map(appendicularSkeletonItem => (
-												<CheckboxItem key={appendicularSkeletonItem.id} name="appendicularSkeletonItems" formControl={form.control} option={appendicularSkeletonItem} />
-											))}
+											{appendicularSkeletonItems.map(item => (
+													<CheckboxItem
+														key={item.id}
+														name="appendicularSkeletonItems"
+														formControl={form.control}
+														option={item}
+													/>
+												)
+											)}
 										</div>
 										<FormMessage />
 									</FormItem>
@@ -339,8 +347,13 @@ export default function ExamRequestPage() {
 								<FormItem>
 									<FormLabel>Combos</FormLabel>
 									<div className="grid grid-cols-1 gap-2 items-top">
-										{combos.map(combo => (
-											<CheckboxItem key={combo.id} name="combos" formControl={form.control} option={combo} />
+										{combos.map(item => (
+											<CheckboxItem
+												key={item.id}
+												name="combos"
+												formControl={form.control}
+												option={item}
+											/>
 										))}
 									</div>
 									<FormMessage />
@@ -362,12 +375,17 @@ export default function ExamRequestPage() {
 							)}
 						/>
 
-						<FormDescription className="text-center">*Os exames de imagem devem ser correlacionados com a Clínica do paciente e demais exames complementares.</FormDescription>
+						<FormDescription className="text-center">
+							*Os exames de imagem devem ser correlacionados com a Clínica do paciente
+							e demais exames complementares.
+						</FormDescription>
 					</FormSection>
 
-					<Button type="submit" disabled={isLoading}>Enviar</Button>
+					<Button type="submit" disabled={isLoading}>
+						Enviar
+					</Button>
 				</form>
 			</Form>
 		</main>
-	);
+	)
 }
