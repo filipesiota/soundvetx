@@ -9,7 +9,8 @@ interface RefreshUserData {
 export async function refreshUserData() {
     const { message, data }: RequestResponse<RefreshUserData> = await sendRequest({
         url: "/api/me",
-        method: "GET"
+        method: "GET",
+        retry: false
     })
 
     return {

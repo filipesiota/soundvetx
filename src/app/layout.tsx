@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Inter as FontSans } from "next/font/google"
-import { cn } from "@/utils/tailwind-utils"
+import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
 import "../styles/globals.css"
 import { Providers } from "./providers"
@@ -34,7 +34,7 @@ export default function RootLayout({
 				<Providers>
 					{children}
 
-					<Toaster richColors closeButton />
+					<Toaster closeButton />
 				</Providers>
 			</body>
 		</html>

@@ -10,8 +10,6 @@
 		"prettier": "prettier --write ."
 	},
 	"dependencies": {
-		"@headlessui/react": "^2.1.2",
-		"@heroicons/react": "^2.1.5",
 		"@hookform/resolvers": "^3.9.0",
 		"@prisma/client": "5.18.0",
 		"@radix-ui/react-checkbox": "^1.1.1",
@@ -27,9 +25,9 @@
 		"clsx": "^2.1.1",
 		"dayjs": "^1.11.12",
 		"jose": "^5.6.3",
+		"lucide-react": "^0.427.0",
 		"next": "14.2.5",
 		"next-themes": "^0.3.0",
-		"nookies": "^2.5.2",
 		"puppeteer-core": "22.11.0",
 		"react": "^18",
 		"react-dom": "^18",

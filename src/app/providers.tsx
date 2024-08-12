@@ -5,8 +5,8 @@ import { LoadingProvider } from "@/contexts/loading-context"
 
 export function Providers({ children }: { children: React.ReactNode }) {
 	return (
-		<AuthProvider>
-			<LoadingProvider>{children}</LoadingProvider>
-		</AuthProvider>
+		<LoadingProvider>
+			<AuthProvider>{children}</AuthProvider>
+		</LoadingProvider>
 	)
 }

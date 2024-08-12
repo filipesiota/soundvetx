@@ -58,7 +58,7 @@ export function validateParam(
 	return null
 }
 
-export async function sendRequest({ url, method, data }: Request) {
+export async function sendRequest({ url, method, data, retry = true }: Request) {
 	const response = await fetch(url, {
 		method,
 		headers: {
@@ -70,7 +70,12 @@ export async function sendRequest({ url, method, data }: Request) {
 	if (response.status === 401) {
 		try {
 			await sendRefreshTokenRequest()
-			// return sendRequest({ url, method, data })
+
+			if (retry) {
+				return sendRequest({ url, method, data })
+			}
+			
+			return
 		} catch (error: any) {
 			throw error as RequestErrorClient
 		}

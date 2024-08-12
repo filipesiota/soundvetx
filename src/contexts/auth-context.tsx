@@ -10,6 +10,7 @@ import { signUpUser } from "@/http/sign-up-user"
 import { signInUser } from "@/http/sign-in-user"
 import { signOutUser } from "@/http/sign-out-user"
 import { refreshUserData } from "@/http/refresh-user-data"
+import { useLoading } from "@/contexts/loading-context"
 
 interface AuthContextProps {
 	isAuthenticated: boolean
@@ -23,6 +24,7 @@ const AuthContext = createContext({} as AuthContextProps)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const router = useRouter()
+	const { setIsLoading } = useLoading()
 	const [user, setUser] = useState<User | null>(null)
 	const isAuthenticated = !!user
 
@@ -40,9 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 			setUser(data.user)
 		} catch (error: any) {
-			const { message, status } = error as RequestErrorClient
-			console.error(message.serverMessage)
-			toast.error(message.clientMessage)
+			const { status } = error as RequestErrorClient
 
 			if (status === 401) {
 				router.replace("/login")
@@ -51,6 +51,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	}
 
 	async function signUp({ fullName, crmv, uf, email, password, confirmPassword }: Veterinarian) {
+		setIsLoading(true)
+
 		try {
 			const { message } = await signUpUser({
 				fullName,
@@ -71,10 +73,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			if (status === 401) {
 				router.replace("/login")
 			}
+		} finally {
+			setIsLoading(false)
 		}
 	}
 
 	async function signIn({ email, password }: Login) {
+		setIsLoading(true)
+
 		try {
 			const { message, data } = await signInUser({ email, password })
 
@@ -90,10 +96,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			if (status === 401) {
 				router.replace("/login")
 			}
+		} finally {
+			setIsLoading(false)
 		}
 	}
 
 	async function signOut() {
+		setIsLoading(true)
+
 		try {
 			const { message } = await signOutUser()
 
@@ -108,6 +118,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			if (status === 401) {
 				router.replace("/login")
 			}
+		} finally {
+			setIsLoading(false)
 		}
 	}
 

@@ -1,5 +1,5 @@
 import React from "react"
-import { cn } from "@/utils/tailwind-utils"
+import { cn } from "@/lib/utils"
 import { GridLoader } from "react-spinners"
 
 interface LoadingPageProps extends React.HTMLAttributes<HTMLDivElement> {

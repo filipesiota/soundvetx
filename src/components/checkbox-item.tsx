@@ -1,5 +1,5 @@
 import React from "react"
-import { cn } from "@/utils/tailwind-utils"
+import { cn } from "@/lib/utils"
 import { Control } from "react-hook-form"
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { Checkbox } from "@/components/ui/checkbox"

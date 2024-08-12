@@ -1,8 +1,8 @@
-import { cn } from "@/utils/tailwind-utils"
+import { cn } from "@/lib/utils"
 import { forwardRef, useState } from "react"
 import { Button } from "./ui/button"
 import { InputProps, Input } from "./ui/input"
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid"
+import { Eye, EyeOff } from "lucide-react"
 
 const PasswordInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...props }, ref) => {
 	const [showPassword, setShowPassword] = useState(false)
@@ -25,9 +25,9 @@ const PasswordInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...
 				disabled={props.disabled}
 			>
 				{showPassword && !disabled ? (
-					<EyeIcon className="h-4 w-4" aria-hidden="true" />
+					<Eye className="h-4 w-4" aria-hidden="true" />
 				) : (
-					<EyeSlashIcon className="h-4 w-4" aria-hidden="true" />
+					<EyeOff className="h-4 w-4" aria-hidden="true" />
 				)}
 				<span className="sr-only">{showPassword ? "Esconder senha" : "Mostrar senha"}</span>
 			</Button>

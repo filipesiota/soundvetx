@@ -7,15 +7,17 @@ export async function POST(request: NextRequest) {
     try {
         await deleteRefreshTokenHandler({ refreshToken: refreshToken?.value ?? "" })
 
-        request.cookies.delete("soundvetx-token");
-        request.cookies.delete("soundvetx-refresh-token");
-
-        return NextResponse.json({
+        const response = NextResponse.json({
             message: {
                 serverMessage: "User signed out successfully",
                 clientMessage: "Usuário desconectado com sucesso."
             }
         }, { status: 200 })
+
+        response.cookies.delete("soundvetx-token");
+        response.cookies.delete("soundvetx-refresh-token");
+
+        return response
     } catch (error: any) {
         return NextResponse.json(error, { status: 401 })
     }
