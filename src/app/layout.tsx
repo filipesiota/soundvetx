@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/sonner"
 import "../styles/globals.css"
 import { Providers } from "./providers"
+import { Suspense } from "react"
+import { LoadingPage } from "@/components/loading-page"
 
 const fontSans = FontSans({
 	subsets: ["latin"],
@@ -32,7 +34,9 @@ export default function RootLayout({
 				)}
 			>
 				<Providers>
-					{children}
+					<Suspense fallback={<LoadingPage />}>
+						{children}
+					</Suspense>
 
 					<Toaster closeButton />
 				</Providers>
