@@ -29,7 +29,7 @@ export async function refreshTokenHandler({ refreshToken }: RefreshTokenHandlerP
         }
     }
 
-    const token = generateTokenProvider(refreshTokenExists.userId)
+    const token = await generateTokenProvider({ userId: refreshTokenExists.userId })
 
     const refreshTokenExpired = dayjs().isAfter(dayjs.unix(refreshTokenExists.expiresIn))
 
@@ -40,15 +40,13 @@ export async function refreshTokenHandler({ refreshToken }: RefreshTokenHandlerP
             }
         })
 
-        const newRefreshToken = await generateRefreshTokenProvider(
-            refreshTokenExists.userId
-        )
+        const newRefreshToken = await generateRefreshTokenProvider({ userId: refreshTokenExists.userId })
 
         return {
-            token,
+            token: token,
             newRefreshToken: newRefreshToken.id
         } as RefreshTokenHandlerResponse
     }
 
-    return { token } as RefreshTokenHandlerResponse
+    return { token: token.toString() } as RefreshTokenHandlerResponse
 }

@@ -1,5 +1,6 @@
 import { RequestError, RequestMessage, RequestResponseClient } from "@/types/request"
 import { Request } from "@/types/request"
+import { useRouter } from "next/navigation"
 import { parseCookies, setCookie } from "nookies"
 
 export function errParamRequired(param: string, type: string): RequestError {
@@ -60,14 +61,12 @@ export function validateParam(
 }
 
 export async function sendRequest({ url, method, data }: Request): Promise<RequestResponseClient<any>> {
-	const { "soundvetx-token": token } = parseCookies(undefined)
-	const authorization = token ? `Bearer ${token}` : ""
+	const router = useRouter()
 
 	const response = await fetch(url, {
 		method,
 		headers: {
-			"Content-Type": "application/json",
-			Authorization: authorization
+			"Content-Type": "application/json"
 		},
 		body: JSON.stringify(data)
 	})
@@ -76,8 +75,8 @@ export async function sendRequest({ url, method, data }: Request): Promise<Reque
 		try {
 			await sendRefreshTokenRequest()
 			return sendRequest({ url, method, data })
-		} catch (error: any) {
-			throw error as RequestMessage
+		} catch {
+			router.replace("/login")
 		}
 	}
 
@@ -91,23 +90,16 @@ export async function sendRequest({ url, method, data }: Request): Promise<Reque
 }
 
 async function sendRefreshTokenRequest(): Promise<void> {
-	const { "soundvetx-refresh-token": refreshToken } = parseCookies(undefined)
-
 	const response = await fetch("/api/refresh-token", {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json"
-		},
-		body: JSON.stringify({ refreshToken })
+		}
 	})
 
 	const responseData = await response.json()
 
-	if (response.ok) {
-		setCookie(undefined, "soundvetx-token", responseData.token, {
-			maxAge: 60 * 60 * 24 // 1 day,
-		})
-	} else {
+	if (!response.ok) {
 		throw responseData.message as RequestMessage
 	}
 }

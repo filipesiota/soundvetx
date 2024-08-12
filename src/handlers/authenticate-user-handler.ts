@@ -13,7 +13,7 @@ interface AuthenticateUserHandlerResponse {
 	token: string
 	refreshToken: string
 	user: {
-		id: string
+		id: number
 		name: string
 		email: string
 		crmv: string | null
@@ -53,7 +53,7 @@ export async function authenticateUserHandler({ email, password }: AuthenticateU
 		}
 	}
 
-	const token = generateTokenProvider(user.id)
+	const token = await generateTokenProvider({ userId: user.id })
 
 	await prismaClient.refreshToken.deleteMany({
 		where: {
@@ -61,10 +61,10 @@ export async function authenticateUserHandler({ email, password }: AuthenticateU
 		}
 	})
 
-	const refreshToken = await generateRefreshTokenProvider(user.id)
+	const refreshToken = await generateRefreshTokenProvider({ userId: user.id })
 
 	return {
-		token,
+		token: token,
 		refreshToken: refreshToken.id,
 		user: {
 			id: user.id,

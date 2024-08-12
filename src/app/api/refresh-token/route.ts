@@ -1,34 +1,32 @@
 import { NextRequest, NextResponse } from "next/server"
 
-import { RefreshTokenRequest, validateRefreshTokenRequest } from "@/validations/refresh-token-validation"
 import { refreshTokenHandler } from "@/handlers/refresh-token-handler"
+import { setRefreshTokenCookie, setTokenCookie } from "@/utils/cookies"
 
-export default async function POST(request: NextRequest) {
-	const body = request.body
-	const { data: validationData, error: validationError } = validateRefreshTokenRequest(body)
-
-	if (validationError !== null) {
-		return NextResponse.json(validationError, { status: 400 })
-	}
-
-	const { refreshToken } = validationData as RefreshTokenRequest
+export async function POST(request: NextRequest) {
+	const refreshToken = request.cookies.get("soundvetx-refresh-token")
 
 	try {
-		const { token, newRefreshToken } = await refreshTokenHandler({ refreshToken })		
+		const { token, newRefreshToken } = await refreshTokenHandler({ refreshToken: refreshToken?.value ?? "" })
 
-		return NextResponse.json(
+		const response = NextResponse.json(
 			{
 				message: {
 					serverMessage: "Token refreshed successfully",
 					clientMessage: "Token atualizado com sucesso."
 				},
-				data: {
-					token,
-					newRefreshToken
-				}
+				data: true
 			},
 			{ status: 200 }
 		)
+
+		setTokenCookie({ res: response, value: token })
+
+		if (newRefreshToken) {
+			setRefreshTokenCookie({ res: response, value: newRefreshToken })
+		}
+
+		return response
 	} catch (error: any) {
 		return NextResponse.json(error, { status: 401 })
 	}

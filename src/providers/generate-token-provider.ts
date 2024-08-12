@@ -1,20 +1,16 @@
-import { Secret, sign, SignOptions } from "jsonwebtoken"
+import { SignJWT } from "jose"
+
 
 interface GenerateTokenProviderProps {
-	userId: string
+	userId: number
 }
 
-export function generateTokenProvider({ userId }: GenerateTokenProviderProps) {
-	const token = sign(
-		{
-			id: userId
-		},
-		process.env.JWT_SECRET as Secret,
-		{
-			subject: userId.toString(),
-			expiresIn: "1d"
-		} as SignOptions
-	)
-
-	return token
+export async function generateTokenProvider({ userId }: GenerateTokenProviderProps) {
+	const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+	const jwt = new SignJWT({ id: userId })
+	jwt.setExpirationTime("1d")
+	jwt.setSubject(userId.toString())
+	jwt.setProtectedHeader({ alg: "HS256" })
+	
+	return await jwt.sign(secret)
 }

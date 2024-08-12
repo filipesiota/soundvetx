@@ -1,4 +1,4 @@
-import { Secret, verify } from "jsonwebtoken"
+import { generateSecret, jwtVerify, KeyLike } from "jose"
 import { NextRequest, NextResponse } from "next/server"
 
 export const config = {
@@ -10,11 +10,11 @@ export const config = {
 		 * - _next/image (image optimization files)
 		 * - favicon.ico (favicon file)
 		 */
-		"/((?!login|register|_next/static|_next/image|favicon.ico).*)"
+		"/((?!_next/static|_next/image|favicon.ico).*)"
 	]
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
 	const pathName = request.nextUrl.pathname
 	const method = request.method
 
@@ -42,12 +42,14 @@ export function middleware(request: NextRequest) {
 		}
 
 		const [, token] = authToken.split(" ")
+		const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 
 		try {
-			verify(token, process.env.JWT_SECRET as Secret)
+			await jwtVerify(token, secret)
 
 			return NextResponse.next()
 		} catch (error: any) {
+			console.log(error)
 			return NextResponse.json(
 				{
 					message: {
@@ -61,8 +63,17 @@ export function middleware(request: NextRequest) {
 	}
 
 	const token = request.cookies.get("soundvetx-token")
+	const refreshToken = request.cookies.get("soundvetx-refresh-token")
 
-	if (!token?.value) {
+	if (pathName.includes("/login") || pathName.includes("/register")) {
+		if (refreshToken?.value) {
+			return NextResponse.redirect(new URL("/", request.url))
+		}
+
+		return NextResponse.next()
+	}
+
+	if (!token?.value && !refreshToken?.value) {
 		return NextResponse.redirect(new URL("/login", request.url))
 	}
 

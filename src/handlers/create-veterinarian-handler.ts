@@ -4,7 +4,7 @@ import { prismaClient } from "@/lib/prisma-client"
 import { Veterinarian } from "@/schemas/veterinarian-schema"
 
 interface CreateVeterinarianHandlerResponse {
-    id: string
+    id: number
     name: string
     email: string
     crmv: string

@@ -1,6 +1,8 @@
+import { NextRequest, NextResponse } from "next/server"
+
 import { authenticateUserHandler } from "@/handlers/authenticate-user-handler"
 import { validateLogin, Login } from "@/schemas/login-schema"
-import { NextRequest, NextResponse } from "next/server"
+import { setRefreshTokenCookie, setTokenCookie } from "@/utils/cookies"
 
 export async function POST(request: NextRequest) {
 	const body = await request.json()
@@ -18,20 +20,23 @@ export async function POST(request: NextRequest) {
 			password
 		})
 
-		return NextResponse.json(
+		const response = NextResponse.json(
 			{
 				message: {
 					serverMessage: "User authenticated successfully",
 					clientMessage: "Usuário autenticado com sucesso."
 				},
 				data: {
-					token,
-					refreshToken,
 					user
 				}
 			},
 			{ status: 200 }
 		)
+
+		setTokenCookie({ res: response, value: token })
+		setRefreshTokenCookie({ res: response, value: refreshToken })
+
+		return response
 	} catch (error: any) {
 		return NextResponse.json(error, { status: 400 })
 	}

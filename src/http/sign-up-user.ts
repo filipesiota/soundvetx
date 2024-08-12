@@ -9,11 +9,15 @@ interface SignUpResponseData {
 
 export async function signUpUser({ fullName, crmv, uf, email, password, confirmPassword }: Veterinarian) {
     const { message, data }: RequestResponse<SignUpResponseData> = await sendRequest({
-        url: "/api/login",
+        url: "/api/users",
         method: "POST",
         data: {
+            fullName,
+            crmv,
+            uf,
             email,
-            password
+            password,
+            confirmPassword
         }
     })
 

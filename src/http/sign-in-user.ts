@@ -4,8 +4,6 @@ import { User } from "@/types/user";
 import { sendRequest } from "@/utils/request";
 
 interface SignInResponseData {
-    token: string
-    refreshToken: string
     user: User
 }
 
