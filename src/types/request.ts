@@ -14,9 +14,14 @@ export interface RequestResponse<T> {
 	data?: T
 }
 
+export interface RequestError extends RequestResponse<null> {}
+
 export interface RequestResponseClient<T> {
 	message: RequestMessage
 	data: T
 }
 
-export interface RequestError extends RequestResponse<null> {}
+export interface RequestErrorClient {
+	message: RequestMessage,
+	status: number
+}

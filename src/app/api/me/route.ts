@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { decodeJwt } from "jose"
+import { getUserHandler } from "@/handlers/get-user-handler"
+import { parse } from "path/posix"
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
 	const token = request.cookies.get("soundvetx-token")
 
 	if (!token?.value) {
@@ -16,31 +18,25 @@ export async function POST(request: NextRequest) {
 		)
 	}
 
-	const id = decodeJwt(token.value).sub
+	const sub = decodeJwt(token.value).sub ?? "0"
+	const userId = parseInt(sub)
 
-	console.log(id)
+	try {
+		const user = await getUserHandler({ userId })
 
-	// try {
-	// 	const { token, refreshToken, user } = await authenticateUserHandler({
-	// 		email,
-	// 		password
-	// 	})
-
-	// 	return NextResponse.json(
-	// 		{
-	// 			message: {
-	// 				serverMessage: "User authenticated successfully",
-	// 				clientMessage: "Usuário autenticado com sucesso."
-	// 			},
-	// 			data: {
-	// 				token,
-	// 				refreshToken,
-	// 				user
-	// 			}
-	// 		},
-	// 		{ status: 200 }
-	// 	)
-	// } catch (error: any) {
-	// 	return NextResponse.json(error, { status: 400 })
-	// }
+		return NextResponse.json(
+			{
+				message: {
+					serverMessage: "User found",
+					clientMessage: "Usuário encontrado."
+				},
+				data: {
+					user
+				}
+			},
+			{ status: 200 }
+		)
+	} catch (error: any) {
+		return NextResponse.json(error, { status: 404 })
+	}
 }

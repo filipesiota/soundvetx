@@ -1,7 +1,7 @@
 import { prismaClient } from "@/lib/prisma-client"
 
 interface GetUserHandlerProps {
-	id: number
+	userId: number
 }
 
 interface GetUserHandlerResponse {
@@ -14,10 +14,10 @@ interface GetUserHandlerResponse {
     type: string
 }
 
-export async function getUserHandler({ id }: GetUserHandlerProps) {
+export async function getUserHandler({ userId }: GetUserHandlerProps) {
 	const user = await prismaClient.user.findFirst({
 		where: {
-			id
+			id: userId
 		},
 		include: {
 			veterinarian: true

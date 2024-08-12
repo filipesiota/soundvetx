@@ -20,14 +20,14 @@ export async function middleware(request: NextRequest) {
 
 	if (pathName.includes("/api")) {
 		if (
-			pathName.includes("/login") ||
+			pathName.includes("/sign-in") ||
 			pathName.includes("/refresh-token") ||
 			(pathName.includes("/users") && method === "POST")
 		) {
 			return NextResponse.next()
 		}
 
-		const authToken = request.headers.get("Authorization")
+		const authToken = request.cookies.get("soundvetx-token")
 
 		if (!authToken) {
 			return NextResponse.json(
@@ -41,11 +41,10 @@ export async function middleware(request: NextRequest) {
 			)
 		}
 
-		const [, token] = authToken.split(" ")
 		const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 
 		try {
-			await jwtVerify(token, secret)
+			await jwtVerify(authToken.value, secret)
 
 			return NextResponse.next()
 		} catch (error: any) {
@@ -66,14 +65,14 @@ export async function middleware(request: NextRequest) {
 	const refreshToken = request.cookies.get("soundvetx-refresh-token")
 
 	if (pathName.includes("/login") || pathName.includes("/register")) {
-		if (refreshToken?.value) {
+		if (refreshToken) {
 			return NextResponse.redirect(new URL("/", request.url))
 		}
 
 		return NextResponse.next()
 	}
 
-	if (!token?.value && !refreshToken?.value) {
+	if (!token && !refreshToken) {
 		return NextResponse.redirect(new URL("/login", request.url))
 	}
 

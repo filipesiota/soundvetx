@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 
 import { createVeterinarianHandler } from "@/handlers/create-veterinarian-handler"
-import { validateVeterinarian } from "@/schemas/veterinarian-schema"
-import { Veterinarian } from "@prisma/client"
+import { validateVeterinarian, Veterinarian } from "@/schemas/veterinarian-schema"
 
 export async function POST(request: NextRequest) {
 	const body = await request.json()

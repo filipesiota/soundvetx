@@ -9,7 +9,7 @@ interface SignInResponseData {
 
 export async function signInUser({ email, password }: Login) {
     const { message, data }: RequestResponseClient<SignInResponseData> = await sendRequest({
-        url: "/api/login",
+        url: "/api/sign-in",
         method: "POST",
         data: {
             email,

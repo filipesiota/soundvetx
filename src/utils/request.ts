@@ -1,7 +1,5 @@
-import { RequestError, RequestMessage, RequestResponseClient } from "@/types/request"
+import { RequestError, RequestErrorClient, RequestMessage } from "@/types/request"
 import { Request } from "@/types/request"
-import { useRouter } from "next/navigation"
-import { parseCookies, setCookie } from "nookies"
 
 export function errParamRequired(param: string, type: string): RequestError {
 	return {
@@ -60,9 +58,7 @@ export function validateParam(
 	return null
 }
 
-export async function sendRequest({ url, method, data }: Request): Promise<RequestResponseClient<any>> {
-	const router = useRouter()
-
+export async function sendRequest({ url, method, data }: Request) {
 	const response = await fetch(url, {
 		method,
 		headers: {
@@ -74,9 +70,9 @@ export async function sendRequest({ url, method, data }: Request): Promise<Reque
 	if (response.status === 401) {
 		try {
 			await sendRefreshTokenRequest()
-			return sendRequest({ url, method, data })
-		} catch {
-			router.replace("/login")
+			// return sendRequest({ url, method, data })
+		} catch (error: any) {
+			throw error as RequestErrorClient
 		}
 	}
 
@@ -85,7 +81,10 @@ export async function sendRequest({ url, method, data }: Request): Promise<Reque
 	if (response.ok) {
 		return responseData
 	} else {
-		throw responseData.message as RequestMessage
+		throw {
+			message: responseData.message as RequestMessage,
+			status: response.status
+		} as RequestErrorClient
 	}
 }
 
@@ -100,6 +99,9 @@ async function sendRefreshTokenRequest(): Promise<void> {
 	const responseData = await response.json()
 
 	if (!response.ok) {
-		throw responseData.message as RequestMessage
+		throw {
+			message: responseData.message as RequestMessage,
+			status: response.status
+		} as RequestErrorClient
 	}
 }

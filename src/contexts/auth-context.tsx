@@ -1,14 +1,15 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 import { Login } from "@/schemas/login-schema"
-import { RequestMessage } from "@/types/request"
+import { RequestErrorClient } from "@/types/request"
 import { Veterinarian } from "@/schemas/veterinarian-schema"
 import { User } from "@/types/user"
 import { signUpUser } from "@/http/sign-up-user"
 import { signInUser } from "@/http/sign-in-user"
 import { signOutUser } from "@/http/sign-out-user"
+import { refreshUserData } from "@/http/refresh-user-data"
 
 interface AuthContextProps {
 	isAuthenticated: boolean
@@ -25,6 +26,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [user, setUser] = useState<User | null>(null)
 	const isAuthenticated = !!user
 
+	useEffect(() => {
+		refreshUser()
+	}, [])
+
+	async function refreshUser() {
+		try {
+			const { data } = await refreshUserData()
+
+			if (!data) {
+				return
+			}
+
+			setUser(data.user)
+		} catch (error: any) {
+			const { message, status } = error as RequestErrorClient
+			console.error(message.serverMessage)
+			toast.error(message.clientMessage)
+
+			if (status === 401) {
+				router.replace("/login")
+			}
+		}
+	}
+
 	async function signUp({ fullName, crmv, uf, email, password, confirmPassword }: Veterinarian) {
 		try {
 			const { message } = await signUpUser({
@@ -39,9 +64,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			toast.success(message.clientMessage)
 			router.push(`/login?email=${email}&password=${password}`)
 		} catch (error: any) {
-			const { serverMessage, clientMessage } = error as RequestMessage
-			console.error(serverMessage)
-			toast.error(clientMessage)
+			const { message, status } = error as RequestErrorClient
+			console.error(message.serverMessage)
+			toast.error(message.clientMessage)
+
+			if (status === 401) {
+				router.replace("/login")
+			}
 		}
 	}
 
@@ -54,9 +83,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			toast.success(message.clientMessage)
 			router.push("/")
 		} catch (error: any) {
-			const { serverMessage, clientMessage } = error as RequestMessage
-			console.error(serverMessage)
-			toast.error(clientMessage)
+			const { message, status } = error as RequestErrorClient
+			console.error(message.serverMessage)
+			toast.error(message.clientMessage)
+
+			if (status === 401) {
+				router.replace("/login")
+			}
 		}
 	}
 
@@ -68,9 +101,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			toast.success(message.clientMessage)
 			router.replace("/login")
 		} catch (error: any) {
-			const { serverMessage, clientMessage } = error as RequestMessage
-			console.error(serverMessage)
-			toast.error(clientMessage)
+			const { message, status } = error as RequestErrorClient
+			console.error(message.serverMessage)
+			toast.error(message.clientMessage)
+
+			if (status === 401) {
+				router.replace("/login")
+			}
 		}
 	}
 
