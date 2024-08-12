@@ -1,7 +1,8 @@
-import React, { useEffect } from "react"
+"use client"
+
+import React from "react"
 import { LogOut } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
-import { useLoading } from "@/contexts/loading-context"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface NavbarHeaderProps extends React.HTMLAttributes<HTMLHeadingElement> {
