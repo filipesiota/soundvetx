@@ -31,19 +31,20 @@ import { ExamRequest, ExamRequestSchema } from "@/schemas/exam-request-schema"
 import { softTissues, skullItems, axialSkeletonItems, appendicularSkeletonItems, combos } from "@/utils/options"
 import { toast } from "sonner"
 import { RequestMessage } from "@/types/request"
-import { LogOut } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { NavbarHeader } from "@/components/navbar-header"
-import { Suspense } from "react"
+import { useEffect } from "react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function ExamRequestPage() {
 	const { isLoading, setIsLoading } = useLoading()
+	const { user } = useAuth()
 
 	const form = useForm<ExamRequest>({
 		resolver: zodResolver(ExamRequestSchema),
 		defaultValues: {
 			veterinarianClinic: "",
-			veterinarianName: "",
+			veterinarianName: user?.name || "",
 			patientName: "",
 			patientSpecies: "",
 			patientSex: "",
@@ -60,6 +61,12 @@ export default function ExamRequestPage() {
 			observations: ""
 		}
 	})
+
+	useEffect(() => {
+		if (user) {
+			form.setValue("veterinarianName", user?.name || "")
+		}
+	}, [user])
 
 	async function onSubmit(values: ExamRequest) {
 		setIsLoading(true)
@@ -98,12 +105,16 @@ export default function ExamRequestPage() {
 							<FormGrid cols={2}>
 								<FormField
 									control={form.control}
-									name="veterinarianClinic"
+									name="veterinarianName"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Clínica Veterinária</FormLabel>
+											<FormLabel>Médica(o) Veterinária(o)</FormLabel>
 											<FormControl>
-												<Input {...field} />
+												{user ? (
+													<Input {...field} disabled />
+												) : (
+													<Skeleton className="h-[35px]" />
+												)}
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -112,10 +123,10 @@ export default function ExamRequestPage() {
 
 								<FormField
 									control={form.control}
-									name="veterinarianName"
+									name="veterinarianClinic"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Médica(o) Veterinária(o)</FormLabel>
+											<FormLabel>Clínica Veterinária</FormLabel>
 											<FormControl>
 												<Input {...field} />
 											</FormControl>

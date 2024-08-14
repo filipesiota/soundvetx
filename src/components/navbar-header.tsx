@@ -26,7 +26,7 @@ const NavbarHeader = React.forwardRef<HTMLHeadingElement, NavbarHeaderProps>(
                         ) : (
                             <span>Administrador</span>
                         ) ) : (
-                            <Skeleton className="h-[40px] w-[150px]" />
+                            <Skeleton className="h-[35px] w-[150px]" />
                         )}
                     </div>
                     <button type="button" onClick={signOut}>
