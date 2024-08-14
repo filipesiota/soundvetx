@@ -30,21 +30,24 @@ import { generateExamRequest } from "@/http/generate-exam-request"
 import { ExamRequest, ExamRequestSchema } from "@/schemas/exam-request-schema"
 import { softTissues, skullItems, axialSkeletonItems, appendicularSkeletonItems, combos } from "@/utils/options"
 import { toast } from "sonner"
-import { RequestMessage } from "@/types/request"
 import { useAuth } from "@/contexts/auth-context"
 import { NavbarHeader } from "@/components/navbar-header"
 import { useEffect } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useRouter } from "next/router"
+import { RequestErrorClient } from "@/types/request"
 
 export default function ExamRequestPage() {
+	const router = useRouter()
 	const { isLoading, setIsLoading } = useLoading()
 	const { user } = useAuth()
+	const disableVeterinarianNameInput = user ? user.type === "veterinarian" : false
 
 	const form = useForm<ExamRequest>({
 		resolver: zodResolver(ExamRequestSchema),
 		defaultValues: {
 			veterinarianClinic: "",
-			veterinarianName: user?.name || "",
+			veterinarianName: "",
 			patientName: "",
 			patientSpecies: "",
 			patientSex: "",
@@ -63,8 +66,8 @@ export default function ExamRequestPage() {
 	})
 
 	useEffect(() => {
-		if (user) {
-			form.setValue("veterinarianName", user?.name || "")
+		if (user && user.type === "veterinarian") {
+			form.setValue("veterinarianName", user.name)
 		}
 	}, [user])
 
@@ -78,9 +81,13 @@ export default function ExamRequestPage() {
 	
 			toast.success(message.clientMessage)
 		} catch (error: any) {
-			const { serverMessage, clientMessage } = error as RequestMessage
-			console.error(serverMessage)
-			toast.error(clientMessage)
+			const { status, message } = error as RequestErrorClient
+			console.error(message.serverMessage)
+			toast.error(message.clientMessage)
+
+			if (status === 401) {
+				router.replace("/login")
+			}
 		} finally {
 			setIsLoading(false)
 		}		
@@ -88,9 +95,9 @@ export default function ExamRequestPage() {
 
 	return (
 		<>
-			<NavbarHeader title="SoundvetX" />
+			<NavbarHeader />
 
-			<main className="flex flex-col items-center w-full max-w-screen-md mx-auto py-8">
+			<main className="flex flex-col items-center w-full max-w-screen-lg mx-auto py-8">
 				<MainTitle
 					size="small"
 					title="Formulário para requisição de exame de imagem"
@@ -111,7 +118,7 @@ export default function ExamRequestPage() {
 											<FormLabel>Médica(o) Veterinária(o)</FormLabel>
 											<FormControl>
 												{user ? (
-													<Input {...field} disabled />
+													<Input {...field} disabled={disableVeterinarianNameInput} />
 												) : (
 													<Skeleton className="h-[35px]" />
 												)}

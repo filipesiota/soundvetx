@@ -1,4 +1,4 @@
-import { generateSecret, jwtVerify, KeyLike } from "jose"
+import { jwtVerify } from "jose"
 import { NextRequest, NextResponse } from "next/server"
 
 export const config = {

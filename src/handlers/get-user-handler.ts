@@ -4,7 +4,7 @@ interface GetUserHandlerProps {
 	userId: number
 }
 
-interface GetUserHandlerResponse {
+export interface GetUserHandlerResponse {
     id: number
     name: string
     email: string

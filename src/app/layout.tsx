@@ -38,7 +38,7 @@ export default function RootLayout({
 						{children}
 					</Suspense>
 
-					<Toaster closeButton />
+					<Toaster closeButton richColors />
 				</Providers>
 			</body>
 		</html>
