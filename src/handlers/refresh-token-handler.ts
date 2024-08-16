@@ -17,6 +17,9 @@ export async function refreshTokenHandler({ refreshToken }: RefreshTokenHandlerP
     const refreshTokenExists = await prismaClient.refreshToken.findFirst({
         where: {
             id: refreshToken
+        },
+        include: {
+            user: true
         }
     })
 
@@ -29,7 +32,10 @@ export async function refreshTokenHandler({ refreshToken }: RefreshTokenHandlerP
         }
     }
 
-    const token = await generateTokenProvider({ userId: refreshTokenExists.userId })
+    const token = await generateTokenProvider({
+        userId: refreshTokenExists.user.id.toString(),
+        userType: refreshTokenExists.user.type
+    })
 
     const refreshTokenExpired = dayjs().isAfter(dayjs.unix(refreshTokenExists.expiresIn))
 

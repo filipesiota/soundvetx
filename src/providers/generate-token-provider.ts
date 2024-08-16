@@ -2,15 +2,19 @@ import { SignJWT } from "jose"
 
 
 interface GenerateTokenProviderProps {
-	userId: number
+	userId: string
+	userType: string
 }
 
-export async function generateTokenProvider({ userId }: GenerateTokenProviderProps) {
-	const secret = new TextEncoder().encode(process.env.JWT_SECRET)
-	const jwt = new SignJWT({ id: userId })
-	jwt.setExpirationTime("1d")
-	jwt.setSubject(userId.toString())
-	jwt.setProtectedHeader({ alg: "HS256" })
+export async function generateTokenProvider({ userId, userType }: GenerateTokenProviderProps) {
+	const encoder = new TextEncoder()
+	const secret = encoder.encode(process.env.JWT_SECRET)
+	const jwt = new SignJWT({
+		sub: userId,
+		admin: ['admin', 'dev'].includes(userType)
+	})
+		.setExpirationTime("1d")
+		.setProtectedHeader({ alg: "HS256" })
 	
-	return await jwt.sign(secret)
+	return jwt.sign(secret)
 }

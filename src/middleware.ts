@@ -1,4 +1,4 @@
-import { jwtVerify } from "jose"
+import { decodeJwt, jwtVerify } from "jose"
 import { NextRequest, NextResponse } from "next/server"
 
 export const config = {
@@ -14,67 +14,140 @@ export const config = {
 	]
 }
 
-export async function middleware(request: NextRequest) {
-	const pathName = request.nextUrl.pathname
-	const method = request.method
+const apiRoutes = {
+	unauthenticated: [
+		{
+			path: "/api/sign-in",
+			allowedMethods: ["POST"]
+		},
+		{
+			path: "/api/refresh-token",
+			allowedMethods: ["POST"]
+		},
+		{
+			path: "/api/users",
+			allowedMethods: ["POST"]
+		}
+	],
+	admin: [
+		{
+			path: "/api/users",
+			allowedMethods: ["GET", "DELETE"]
+		}
+	]
+}
 
-	if (pathName.includes("/api")) {
-		if (
-			pathName.includes("/sign-in") ||
-			pathName.includes("/refresh-token") ||
-			(pathName.includes("/users") && method === "POST")
-		) {
+const appRoutes = {
+	unauthenticated: [
+		"/login",
+		"/register"
+	],
+	admin: [
+		"/users"
+	]
+}
+
+const unauthorizedApiResponse = NextResponse.json(
+	{
+		message: {
+			serverMessage: "Unauthorized access",
+			clientMessage: "Você não tem permissão para acessar este recurso."
+		}
+	},
+	{ status: 401 }
+)
+
+export async function middleware(request: NextRequest) {
+	const method = request.method
+	const pathName = request.nextUrl.pathname
+	const isApiRoute = pathName.includes("/api")
+
+	if (isApiRoute) {
+		const isUnauthenticatedRoute = apiRoutes.unauthenticated.some(route => {
+			return route.path === pathName && route.allowedMethods.includes(method)
+		})
+
+		// Allow unauthenticated routes to pass through
+		if (isUnauthenticatedRoute) {
 			return NextResponse.next()
 		}
 
 		const authToken = request.cookies.get("soundvetx-token")
 
 		if (!authToken) {
-			return NextResponse.json(
-				{
-					message: {
-						serverMessage: "User is not authenticated",
-						clientMessage: "Você não tem permissão para acessar este recurso."
-					}
-				},
-				{ status: 401 }
-			)
+			return unauthorizedApiResponse
 		}
 
-		const secret = new TextEncoder().encode(process.env.JWT_SECRET)
+		const encoder = new TextEncoder()
+		const secret = encoder.encode(process.env.JWT_SECRET)
+		const { value: jwt } = authToken
 
 		try {
-			await jwtVerify(authToken.value, secret)
+			await jwtVerify(jwt, secret)
 
+			const isAdminRoute = apiRoutes.admin.some(route => {
+				return route.path === pathName && route.allowedMethods.includes(method)
+			})
+
+			// Check if user has admin permission to access the route
+			if (isAdminRoute) {
+				const payload = decodeJwt(jwt)
+
+				if (!payload.admin) {
+					return unauthorizedApiResponse
+				}
+			}
+
+			// Allow authenticated routes to pass through
 			return NextResponse.next()
-		} catch (error: any) {
-			console.log(error)
-			return NextResponse.json(
-				{
-					message: {
-						serverMessage: "Unauthorized access",
-						clientMessage: "Você não tem permissão para acessar este recurso."
-					}
-				},
-				{ status: 401 }
-			)
+		} catch {
+			return unauthorizedApiResponse
 		}
 	}
 
-	const token = request.cookies.get("soundvetx-token")
+	const authToken = request.cookies.get("soundvetx-token")
 	const refreshToken = request.cookies.get("soundvetx-refresh-token")
+	const isUnauthenticatedRoute = appRoutes.unauthenticated.some(route => {
+		return pathName.includes(route)
+	})
 
-	if (pathName.includes("/login") || pathName.includes("/register")) {
+	// Allow unauthenticated routes to pass through
+	if (isUnauthenticatedRoute) {
 		if (refreshToken) {
-			return NextResponse.redirect(new URL("/", request.url))
+			return NextResponse.redirect(new URL("/login", request.url))
 		}
 
 		return NextResponse.next()
 	}
 
-	if (!token && !refreshToken) {
+	// Redirect to login page if user is not authenticated
+	if (!authToken) {
 		return NextResponse.redirect(new URL("/login", request.url))
 	}
 
-	return NextResponse.next()
+	const encoder = new TextEncoder()
+	const secret = encoder.encode(process.env.JWT_SECRET)
+	const { value: jwt } = authToken
+
+	try {
+		await jwtVerify(jwt, secret)
+
+		const isAdminRoute = appRoutes.admin.some(route => {
+			return pathName.includes(route)
+		})
+
+		// Check if user has admin permission to access the route
+		if (isAdminRoute) {
+			const payload = decodeJwt(jwt)
+
+			if (!payload.admin) {
+				return NextResponse.redirect(new URL("/", request.url))
+			}
+		}
+
+		// Allow authenticated routes to pass through
+		return NextResponse.next()
+	} catch {
+		return NextResponse.redirect(new URL("/login", request.url))
+	}
 }

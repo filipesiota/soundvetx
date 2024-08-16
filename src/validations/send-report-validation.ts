@@ -1,6 +1,6 @@
 import { malformedBodyRequest, validateParam } from "@/utils/request"
-import { ComboReturn } from "../types/combo-return"
-import { RequestError } from "../types/request"
+import { ComboReturn } from "@/types/combo-return"
+import { RequestError } from "@/types/request"
 
 interface SendReportRequest {
 	veterinarianClinic: string

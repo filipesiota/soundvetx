@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { decodeJwt } from "jose"
 import { getUserHandler } from "@/handlers/get-user-handler"
-import { parse } from "path/posix"
 
 export async function GET(request: NextRequest) {
 	const token = request.cookies.get("soundvetx-token")
@@ -19,7 +18,7 @@ export async function GET(request: NextRequest) {
 	}
 
 	const sub = decodeJwt(token.value).sub ?? "0"
-	const userId = parseInt(sub)
+	const userId = Number(sub)
 
 	try {
 		const user = await getUserHandler({ userId })

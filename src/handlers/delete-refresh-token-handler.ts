@@ -1,8 +1,4 @@
-import dayjs from "dayjs"
-
 import { prismaClient } from "@/lib/prisma-client"
-import { generateRefreshTokenProvider } from "@/providers/generate-refresh-token-provider"
-import { generateTokenProvider } from "@/providers/generate-token-provider"
 
 interface DeleteRefreshTokenHandlerProps {
     refreshToken: string

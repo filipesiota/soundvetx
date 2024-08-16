@@ -53,7 +53,10 @@ export async function authenticateUserHandler({ email, password }: AuthenticateU
 		}
 	}
 
-	const token = await generateTokenProvider({ userId: user.id })
+	const token = await generateTokenProvider({
+		userId: user.id.toString(),
+		userType: user.type
+	})
 
 	await prismaClient.refreshToken.deleteMany({
 		where: {
