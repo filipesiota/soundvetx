@@ -20,13 +20,15 @@ interface AuthenticateUserHandlerResponse {
 		uf: string | null
 		canSendWhatsapp: boolean
 		type: string
+		isActive: boolean
 	}
 }
 
 export async function authenticateUserHandler({ email, password }: AuthenticateUserHandlerProps) {
 	const user = await prismaClient.user.findFirst({
 		where: {
-			email
+			email,
+			isActive: true
 		},
 		include: {
 			veterinarian: true
@@ -76,7 +78,8 @@ export async function authenticateUserHandler({ email, password }: AuthenticateU
 			crmv: user.veterinarian?.crmv,
 			uf: user.veterinarian?.uf,
 			canSendWhatsapp: user.canSendWhatsapp,
-			type: user.type
+			type: user.type,
+			isActive: user.isActive
 		}
 	} as AuthenticateUserHandlerResponse
 }

@@ -16,12 +16,16 @@ const NavbarHeader = React.forwardRef<HTMLHeadingElement, NavbarHeaderProps>(
 		return (
             <header
                 ref={ref}
-                className={cn("flex flex-row items-center justify-between w-full max-w-screen-lg mx-auto py-4", className)}
+                className={cn("flex flex-row items-center justify-between w-full max-w-screen-xl mx-auto py-4", className)}
                 {...props}
             >
                 <h1 className="text-2xl font-medium">SoundvetX</h1>
 
-                <Navbar />
+                {user ? (
+                    <Navbar />
+                ) : (
+                    <Skeleton className="h-[40px] w-[300px]" />
+                )}
 
                 <div className="flex flex-row items-center gap-3">
                     <div className="flex flex-col text-end text-sm leading-tight">

@@ -12,6 +12,7 @@ export interface GetUserHandlerResponse {
     uf?: string
     canSendWhatsapp: boolean
     type: string
+	isActive: boolean
 }
 
 export async function getUserHandler({ userId }: GetUserHandlerProps) {
@@ -40,6 +41,7 @@ export async function getUserHandler({ userId }: GetUserHandlerProps) {
 		crmv: user.veterinarian?.crmv,
 		uf: user.veterinarian?.uf,
 		canSendWhatsapp: user.canSendWhatsapp,
-		type: user.type
+		type: user.type,
+		isActive: user.isActive
 	} as GetUserHandlerResponse
 }

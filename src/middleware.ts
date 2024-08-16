@@ -32,7 +32,7 @@ const apiRoutes = {
 	admin: [
 		{
 			path: "/api/users",
-			allowedMethods: ["GET", "DELETE"]
+			allowedMethods: ["GET", "DELETE", "PATCH", "PUT"]
 		}
 	]
 }
@@ -64,7 +64,7 @@ export async function middleware(request: NextRequest) {
 
 	if (isApiRoute) {
 		const isUnauthenticatedRoute = apiRoutes.unauthenticated.some(route => {
-			return route.path === pathName && route.allowedMethods.includes(method)
+			return pathName.includes(route.path) && route.allowedMethods.includes(method)
 		})
 
 		// Allow unauthenticated routes to pass through
@@ -86,7 +86,7 @@ export async function middleware(request: NextRequest) {
 			await jwtVerify(jwt, secret)
 
 			const isAdminRoute = apiRoutes.admin.some(route => {
-				return route.path === pathName && route.allowedMethods.includes(method)
+				return pathName.includes(route.path) && route.allowedMethods.includes(method)
 			})
 
 			// Check if user has admin permission to access the route

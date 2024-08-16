@@ -34,7 +34,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { NavbarHeader } from "@/components/navbar-header"
 import { useEffect } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 import { RequestErrorClient } from "@/types/request"
 
 export default function ExamRequestPage() {
@@ -97,7 +97,7 @@ export default function ExamRequestPage() {
 		<>
 			<NavbarHeader />
 
-			<main className="flex flex-col items-center w-full max-w-screen-lg mx-auto py-8">
+			<main className="flex flex-col items-center w-full max-w-screen-xl mx-auto py-8">
 				<MainTitle
 					size="small"
 					title="Formulário para requisição de exame de imagem"

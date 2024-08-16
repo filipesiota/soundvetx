@@ -10,7 +10,8 @@ interface CreateVeterinarianHandlerResponse {
     crmv: string
     uf: string
     canSendWhatsapp: boolean
-    type: string
+    type: string,
+    isActive: boolean
 }
 
 export async function createVeterinarianHandler({ fullName, crmv, uf, email, password, confirmPassword }: Veterinarian) {
@@ -82,6 +83,7 @@ export async function createVeterinarianHandler({ fullName, crmv, uf, email, pas
         crmv: veterinarian.crmv,
         uf: veterinarian.uf,
         canSendWhatsapp: veterinarian.user.canSendWhatsapp,
-        type: veterinarian.user.type
+        type: veterinarian.user.type,
+        isActive: veterinarian.user.isActive
     } as CreateVeterinarianHandlerResponse
 }

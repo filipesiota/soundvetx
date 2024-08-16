@@ -1,6 +1,6 @@
 export type Request = {
 	url: string
-	method: "GET" | "POST" | "PUT" | "DELETE"
+	method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
 	data?: any
 	retry?: boolean
 }

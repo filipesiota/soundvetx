@@ -5,7 +5,10 @@ export async function getUsersHandler() {
 	const users = await prismaClient.user.findMany({
 		include: {
 			veterinarian: true
-		}
+		},
+        orderBy: {
+            name: 'asc'
+        }
 	})
 
 	return users.map(user =>{
@@ -16,7 +19,8 @@ export async function getUsersHandler() {
             crmv: user.veterinarian?.crmv,
             uf: user.veterinarian?.uf,
             canSendWhatsapp: user.canSendWhatsapp,
-            type: user.type
+            type: user.type,
+            isActive: user.isActive
         }
 	}) as GetUserHandlerResponse[]
 }
