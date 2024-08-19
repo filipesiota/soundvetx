@@ -5,10 +5,10 @@ services:
     image: postgres:latest
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DATABASE_NAME}
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      TZ: ${DATABASE_TZ}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: ${POSTGRES_TZ}
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
