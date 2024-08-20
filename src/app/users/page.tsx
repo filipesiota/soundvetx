@@ -15,12 +15,13 @@ import { restoreUser } from "@/http/restore-user";
 import { updateUser } from "@/http/update-user";
 import { RequestErrorClient } from "@/types/request";
 import { User } from "@/types/user";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@radix-ui/react-dialog";
-import { Label } from "@radix-ui/react-label";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { ArchiveRestore, Trash, UserPen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { UserFormDialogContent } from "@/components/user-form-dialog-content";
+import { UserTypes } from "@/utils/options";
 
 interface UserUpdateProps {
     data: User
@@ -213,19 +214,7 @@ export default function UsersPage() {
                     </TableHeader>
                     <TableBody>
                         {users.map(user => {
-                            let userType = ""
-
-                            switch (user.type) {
-                                case "admin":
-                                    userType = "Administrador"
-                                    break
-                                case "veterinarian":
-                                    userType = "Veterinário"
-                                    break
-                                case "dev":
-                                    userType = "Desenvolvedor"
-                                    break
-                            }
+                            const userType = UserTypes.find(item => item.value === user.type)?.label
 
                             return (
                                 <TableRow key={user.id}>
@@ -256,38 +245,13 @@ export default function UsersPage() {
                                                 </Button>
                                             </DialogTrigger>
 
-                                            <DialogContent className="sm:max-w-[425px] fixed top-1/2 left-1/2 bg-background border-foreground border-2 translate-x-[-50%] translate-y-[-50%] p-6 rounded-lg">
-                                                <DialogHeader>
-                                                    <DialogTitle>Editar usuário</DialogTitle>
-                                                </DialogHeader>
-
-                                                <div className="grid gap-4 py-4">
-                                                    <div className="grid grid-cols-4 items-center gap-4">
-                                                        <Label htmlFor="name" className="text-right">
-                                                            Name
-                                                        </Label>
-                                                        <Input
-                                                            id="name"
-                                                            defaultValue="Pedro Duarte"
-                                                            className="col-span-3"
-                                                        />
-                                                    </div>
-                                                    <div className="grid grid-cols-4 items-center gap-4">
-                                                        <Label htmlFor="username" className="text-right">
-                                                            Username
-                                                        </Label>
-                                                        <Input
-                                                            id="username"
-                                                            defaultValue="@peduarte"
-                                                            className="col-span-3"
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                <DialogFooter>
-                                                    <Button type="submit">Save changes</Button>
-                                                </DialogFooter>
-                                            </DialogContent>
+                                            <UserFormDialogContent
+                                                state="edit"
+                                                user={user}
+                                                onClose={user => {
+                                                    console.log(user)
+                                                }}
+                                            />
                                         </Dialog>
 
                                         {user.isActive ? (

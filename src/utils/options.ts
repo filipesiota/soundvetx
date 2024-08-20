@@ -1,5 +1,6 @@
 import { CheckboxOption } from "@/components/checkbox-item"
 import { FederativeUnit } from "@/types/federative-unit"
+import { UserType, UserTypeOption } from "@/types/user"
 
 export const softTissues: CheckboxOption[] = [
 	{ id: "chest", label: "Tórax" },
@@ -65,4 +66,10 @@ export const federativeUnits: FederativeUnit[] = [
 	{ name: "São Paulo", abbreviation: "SP" },
 	{ name: "Sergipe", abbreviation: "SE" },
 	{ name: "Tocantins", abbreviation: "TO" }
+]
+
+export const UserTypes: UserTypeOption[] = [
+	{ value: UserType.Admin, label: "Administrador" },
+	{ value: UserType.Dev, label: "Desenvolvedor" },
+	{ value: UserType.Veterinarian, label: "Veterinário" }
 ]
