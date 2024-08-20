@@ -107,34 +107,6 @@ export default function UsersPage() {
         })
     }
 
-    async function handleUpdateUser(user: User) {
-        setIsLoading(true)
-
-        try {
-            const { message } = await updateUser({
-                userId: user.id.toString(),
-                name: user.name,
-                email: user.email,
-                crmv: user.type === "veterinarian" ? user.crmv : undefined,
-                uf: user.type === "veterinarian" ? user.uf : undefined,
-                canSendWhatsapp: user.canSendWhatsapp,
-                type: user.type
-            })
-
-            toast.success(message.clientMessage)
-        } catch (error: any) {
-            const { status, message } = error as RequestErrorClient
-            console.error(message.serverMessage)
-            toast.error(message.clientMessage)
-
-            if (status === 401) {
-                router.replace("/login")
-            }
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
     async function handleCanSendWhatsappChange(user: User, checked: boolean) {
         setIsLoading(true)
 
@@ -237,9 +209,6 @@ export default function UsersPage() {
                                                 <Button
                                                     variant="outline"
                                                     size="icon"
-                                                    onClick={() => {
-                                                        onUserUpdateOpen(user)
-                                                    }}
                                                 >
                                                     <UserPen />
                                                 </Button>
