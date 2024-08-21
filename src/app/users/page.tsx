@@ -2,9 +2,6 @@
 
 import { MainTitle } from "@/components/main-title";
 import { NavbarHeader } from "@/components/navbar-header";
-import { Button } from "@/components/ui/button";
-import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { useLoading } from "@/contexts/loading-context";
@@ -12,27 +9,32 @@ import { canSendWhatsappUser } from "@/http/can-send-whatsapp-user";
 import { deleteUser } from "@/http/delete-user";
 import { getUsers } from "@/http/get-users";
 import { restoreUser } from "@/http/restore-user";
-import { updateUser } from "@/http/update-user";
 import { RequestErrorClient } from "@/types/request";
 import { User } from "@/types/user";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { ArchiveRestore, Trash, UserPen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { UserFormDialogContent } from "@/components/user-form-dialog-content";
+import { UserFormDialog } from "@/components/user-form-dialog";
 import { UserTypes } from "@/utils/options";
-
-interface UserUpdateProps {
-    data: User
-    originalData: User
-}
+import { FormState } from "@/types/form";
+import { ToggleDeleteRestoreButton } from "@/components/toggle-delete-restore-button";
 
 export default function UsersPage() {
     const router = useRouter()
     const { setIsLoading } = useLoading()
     const [users, setUsers] = useState<User[]>([])
-    const [userUpdate, setUserUpdate] = useState<UserUpdateProps | null>(null)
+
+    function handleUpdateUser(user: User) {
+        const items = users.map(item => {
+            if (item.id === user.id) {
+                return {...user}
+            }
+
+            return item
+        })
+
+        setUsers(items)
+    }
 
     async function handleRestoreUser(user: User) {
         setIsLoading(true)
@@ -98,13 +100,6 @@ export default function UsersPage() {
         } finally {
             setIsLoading(false)
         }
-    }
-
-    function onUserUpdateOpen(user: User) {
-        setUserUpdate({
-            data: user,
-            originalData: user
-        })
     }
 
     async function handleCanSendWhatsappChange(user: User, checked: boolean) {
@@ -204,48 +199,21 @@ export default function UsersPage() {
                                         />
                                     </TableCell>
                                     <TableCell className="ml-2 flex gap-1">
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button
-                                                    variant="outline"
-                                                    size="icon"
-                                                >
-                                                    <UserPen />
-                                                </Button>
-                                            </DialogTrigger>
+                                        <UserFormDialog
+                                            state={FormState.Update}
+                                            user={user}
+                                            onClose={handleUpdateUser}
+                                        />
 
-                                            <UserFormDialogContent
-                                                state="edit"
-                                                user={user}
-                                                onClose={user => {
-                                                    console.log(user)
-                                                }}
-                                            />
-                                        </Dialog>
-
-                                        {user.isActive ? (
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                title="Deletar"
-                                                onClick={() => {
-                                                    handleDeleteUser(user)
-                                                }}
-                                            >
-                                                <Trash />
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                title="Restaurar"
-                                                onClick={() => {
-                                                    handleRestoreUser(user)
-                                                }}
-                                            >
-                                                <ArchiveRestore />
-                                            </Button>
-                                        )}
+                                        <ToggleDeleteRestoreButton
+                                            isDeleted={!user.isActive}
+                                            onDelete={() => {
+                                                handleDeleteUser(user)
+                                            }}
+                                            onRestore={() => {
+                                                handleRestoreUser(user)
+                                            }}
+                                        />
                                     </TableCell>
                                 </TableRow>
                             )

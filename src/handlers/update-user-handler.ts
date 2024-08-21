@@ -1,17 +1,17 @@
 import { prismaClient } from "@/lib/prisma-client"
+import { UserUpdateForm } from "@/schemas/user-schema"
+import { User, UserType } from "@/types/user"
 
-interface UpdateUserHandlerProps {
+interface UserUpdateHandler {
     userId: number
-    name?: string
-    email?: string
-    crmv?: string
-    uf?: string
-    canSendWhatsapp?: boolean
-    type?: string
+    values: UserUpdateForm
 }
 
-export async function updateUserHandler({ userId, name, email, crmv, uf, canSendWhatsapp, type }: UpdateUserHandlerProps) {
-    const user = await prismaClient.user.findFirst({
+export async function updateUserHandler({ userId, values }: UserUpdateHandler) {
+    const { type, fullName, email, ...props } = values
+    const isVeterinarian = (type === UserType.Veterinarian) && ("crmv" in props) && ("uf" in props)
+
+    const userExists = await prismaClient.user.findFirst({
         where: {
             id: userId
         },
@@ -20,7 +20,7 @@ export async function updateUserHandler({ userId, name, email, crmv, uf, canSend
         }
     })
 
-    if (!user) {
+    if (!userExists) {
         throw {
             message: {
                 serverMessage: "User not found",
@@ -31,13 +31,16 @@ export async function updateUserHandler({ userId, name, email, crmv, uf, canSend
     }
 
     if (email) {
-        const userAlreadyExists = await prismaClient.user.findFirst({
+        const emailAlreadyExists = await prismaClient.user.findFirst({
             where: {
-                email
+                email,
+                NOT: {
+                    id: userId
+                }
             }
         })
 
-        if (userAlreadyExists) {
+        if (emailAlreadyExists) {
             throw {
                 message: {
                     serverMessage: "Email address already exists",
@@ -49,11 +52,14 @@ export async function updateUserHandler({ userId, name, email, crmv, uf, canSend
         }
     }
 
-    if (crmv || uf) {
+    if (isVeterinarian) {
         const veterinarianAlreadyExists = await prismaClient.veterinarian.findFirst({
             where: {
-                crmv: crmv ?? user.veterinarian?.crmv,
-                uf: uf ?? user.veterinarian?.uf
+                crmv: props.crmv,
+                uf: props.uf,
+                NOT: {
+                    userId
+                }
             }
         })
 
@@ -69,21 +75,54 @@ export async function updateUserHandler({ userId, name, email, crmv, uf, canSend
         }
     }
 
-    await prismaClient.user.update({
+    if (isVeterinarian) {
+        const veterinarian = await prismaClient.veterinarian.update({
+            where: {
+                userId
+            },
+            data: {
+                user: {
+                    update: {
+                        name: fullName,
+                        email
+                    }
+                },
+                crmv: props.crmv,
+                uf: props.uf
+            },
+            include: {
+                user: true
+            }
+        })
+
+        return {
+            id: veterinarian.user.id,
+            name: veterinarian.user.name,
+            email: veterinarian.user.email,
+            crmv: veterinarian.crmv,
+            uf: veterinarian.uf,
+            canSendWhatsapp: veterinarian.user.canSendWhatsapp,
+            type,
+            isActive: veterinarian.user.isActive
+        } as User
+    }
+
+    const user = await prismaClient.user.update({
         where: {
             id: userId
         },
         data: {
-            name,
-            email,
-            veterinarian: {
-                update: {
-                    crmv,
-                    uf
-                }
-            },
-            canSendWhatsapp,
-            type
+            name: fullName,
+            email
         }
     })
+
+    return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        canSendWhatsapp: user.canSendWhatsapp,
+        type,
+        isActive: user.isActive
+    } as User
 }

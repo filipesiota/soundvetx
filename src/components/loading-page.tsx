@@ -17,7 +17,7 @@ const LoadingPage = React.forwardRef<HTMLDivElement, LoadingPageProps>(
 				id={id}
 				ref={ref}
 				className={cn(
-					"flex flex-col items-center justify-center fixed top-0 left-0 loading-background text-loading-foreground z-10 h-full w-full",
+					"flex flex-col items-center justify-center fixed top-0 left-0 loading-background text-loading-foreground z-50 h-full w-full",
 					className
 				)}
 				{...props}

@@ -1,31 +1,33 @@
+import { UserUpdateForm } from "@/schemas/user-schema";
 import { RequestResponseClient } from "@/types/request";
+import { User } from "@/types/user";
 import { sendRequest } from "@/utils/request";
 
 interface UpdateUserProps {
-    userId: string
-    name?: string
-    email?: string
-    crmv?: string
-    uf?: string
-    canSendWhatsapp?: boolean
-    type?: string
+    userId: number
+    values: UserUpdateForm
 }
 
-export async function updateUser({ userId, name, email, crmv, uf, canSendWhatsapp, type }: UpdateUserProps) {
-    const { message }: RequestResponseClient<boolean> = await sendRequest({
+interface UpdateUserResponseData {
+    user: User
+}
+
+export async function updateUser({ userId, values }: UpdateUserProps) {
+    const { type, fullName, email, ...props } = values
+
+    const { message, data }: RequestResponseClient<UpdateUserResponseData> = await sendRequest({
         url: `/api/users/${userId}`,
         method: "PUT",
         data: {
-            name,
+            type,
+            fullName,
             email,
-            crmv,
-            uf,
-            canSendWhatsapp,
-            type
+            ...props
         }
     })
 
     return {
-        message
+        message,
+        data
     }
 }

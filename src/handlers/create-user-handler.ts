@@ -7,13 +7,13 @@ import { User, UserType } from "@/types/user"
 export async function createUserHandler({ type, fullName, email, password, confirmPassword, ...props }: UserCreateForm) {
     const isVeterinarian = (type === UserType.Veterinarian) && ("crmv" in props) && ("uf" in props)
 
-    const userAlreadyExists = await prismaClient.user.findFirst({
+    const emailAlreadyExists = await prismaClient.user.findFirst({
         where: {
             email
         }
     })
 
-    if (userAlreadyExists) {
+    if (emailAlreadyExists) {
         throw {
             message: {
                 serverMessage: "Email address already exists",
