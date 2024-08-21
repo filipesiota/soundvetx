@@ -1,28 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 
-import { createVeterinarianHandler } from "@/handlers/create-veterinarian-handler"
-import { validateVeterinarian, Veterinarian } from "@/schemas/veterinarian-schema"
 import { getUsersHandler } from "@/handlers/get-users-handler"
+import { UserCreateForm, validateUserCreateForm } from "@/schemas/user-schema"
+import { createUserHandler } from "@/handlers/create-user-handler"
 
 export async function POST(request: NextRequest) {
 	const body = await request.json()
-	const { data: validationData, error: validationError } = validateVeterinarian(body)
+	const { data: validationData, error: validationError } = validateUserCreateForm(body)
 
 	if (validationError !== null) {
 		return NextResponse.json(validationError, { status: 400 })
 	}
 
-	const { fullName, crmv, uf, email, password, confirmPassword } = validationData as Veterinarian
-
 	try {
-		const user = await createVeterinarianHandler({
-			fullName,
-			crmv,
-			uf,
-			email,
-			password,
-			confirmPassword
-		})
+		const user = await createUserHandler(validationData as UserCreateForm)
 
 		return NextResponse.json(
 			{

@@ -1,6 +1,5 @@
 "use client"
 
-import { VeterinarianSchema, Veterinarian } from "@/schemas/veterinarian-schema"
 import { FormSection } from "@/components/form-section"
 import { MainTitle } from "@/components/main-title"
 import { PasswordInput } from "@/components/password-input"
@@ -28,14 +27,17 @@ import { useForm } from "react-hook-form"
 import { useAuth } from "@/contexts/auth-context"
 import { useLoading } from "@/contexts/loading-context"
 import { federativeUnits } from "@/utils/options"
+import { UserCreateForm, UserCreateSchema } from "@/schemas/user-schema"
+import { UserType } from "@/types/user"
 
 export default function RegisterPage() {
 	const { isLoading, setIsLoading } = useLoading()
 	const { signUp } = useAuth()
 
-	const form = useForm<Veterinarian>({
-		resolver: zodResolver(VeterinarianSchema),
+	const form = useForm<UserCreateForm>({
+		resolver: zodResolver(UserCreateSchema),
 		defaultValues: {
+			type: UserType.Veterinarian,
 			fullName: "",
 			crmv: "",
 			uf: "",
@@ -45,10 +47,8 @@ export default function RegisterPage() {
 		}
 	})
 
-	async function onSubmit(values: Veterinarian) {
-		setIsLoading(true)
+	async function onSubmit(values: UserCreateForm) {
 		await signUp(values)
-		setIsLoading(false)
 	}
 
 	return (

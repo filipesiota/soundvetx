@@ -1,22 +1,22 @@
 import { createContext, useContext, useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 import { Login } from "@/schemas/login-schema"
 import { RequestErrorClient } from "@/types/request"
-import { Veterinarian } from "@/schemas/veterinarian-schema"
 import { User } from "@/types/user"
-import { signUpUser } from "@/http/sign-up-user"
+import { createUser } from "@/http/create-user"
 import { signInUser } from "@/http/sign-in-user"
 import { signOutUser } from "@/http/sign-out-user"
 import { refreshUserData } from "@/http/refresh-user-data"
 import { useLoading } from "@/contexts/loading-context"
+import { UserCreateForm } from "@/schemas/user-schema"
 
 interface AuthContextProps {
 	isAuthenticated: boolean
 	user: User | null
 	signIn: (login: Login) => Promise<void>
-	signUp: (veterinarian: Veterinarian) => Promise<void>
+	signUp: (user: UserCreateForm) => Promise<void>
 	signOut: () => void
 }
 
@@ -24,12 +24,15 @@ const AuthContext = createContext({} as AuthContextProps)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const router = useRouter()
+	const pathname = usePathname()
 	const { setIsLoading } = useLoading()
 	const [user, setUser] = useState<User | null>(null)
 	const isAuthenticated = !!user
 
 	useEffect(() => {
-		refreshUser()
+		if (!["/login", "/register"].includes(pathname)) {
+			refreshUser()
+		}
 	}, [])
 
 	async function refreshUser() {
@@ -50,17 +53,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		}
 	}
 
-	async function signUp({ fullName, crmv, uf, email, password, confirmPassword }: Veterinarian) {
+	async function signUp({ fullName, email, password, confirmPassword, ...props }: UserCreateForm) {
 		setIsLoading(true)
 
 		try {
-			const { message } = await signUpUser({
+			const { message } = await createUser({
 				fullName,
-				crmv,
-				uf,
 				email,
 				password,
-				confirmPassword
+				confirmPassword,
+				...props
 			})
 
 			toast.success(message.clientMessage)
