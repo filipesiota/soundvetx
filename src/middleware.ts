@@ -114,7 +114,7 @@ export async function middleware(request: NextRequest) {
 	// Allow unauthenticated routes to pass through
 	if (isUnauthenticatedRoute) {
 		if (refreshToken) {
-			return NextResponse.redirect(new URL("/login", request.url))
+			return NextResponse.redirect(new URL("/", request.url))
 		}
 
 		return NextResponse.next()
