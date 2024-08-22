@@ -94,7 +94,7 @@ const UserCreateDialog = React.forwardRef<HTMLFormElement, UserCreateDialogProps
 		return (
 			<>
 				<CustomAlertDialog
-					title="Salvar usuário?"
+					title="Salvar usuário"
 					description="Deseja salvar este novo usuário?"
 					cancelText="Descartar"
 					confirmText="Salvar"
@@ -363,7 +363,7 @@ const UserUpdateDialog = React.forwardRef<HTMLFormElement, UserUpdateDialogProps
 	return (
 		<>
 			<CustomAlertDialog
-				title="Salvar alterações?"
+				title="Salvar alterações"
 				description="Deseja salvar as alterações feitas?"
 				cancelText="Descartar"
 				confirmText="Salvar"
