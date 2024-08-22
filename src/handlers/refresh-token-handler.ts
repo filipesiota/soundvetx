@@ -34,7 +34,8 @@ export async function refreshTokenHandler({ refreshToken }: RefreshTokenHandlerP
 
     const token = await generateTokenProvider({
         userId: refreshTokenExists.user.id.toString(),
-        userType: refreshTokenExists.user.type
+        userType: refreshTokenExists.user.type,
+        userCanSendWhatsapp: refreshTokenExists.user.canSendWhatsapp
     })
 
     const refreshTokenExpired = dayjs().isAfter(dayjs.unix(refreshTokenExists.expiresIn))

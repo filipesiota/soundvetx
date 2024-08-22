@@ -28,26 +28,44 @@ import { Textarea } from "@/components/ui/textarea"
 import { useLoading } from "@/contexts/loading-context"
 import { generateExamRequest } from "@/http/generate-exam-request"
 import { ExamRequest, ExamRequestSchema } from "@/schemas/exam-request-schema"
-import { softTissues, skullItems, axialSkeletonItems, appendicularSkeletonItems, combos } from "@/utils/options"
+import { softTissues, skullItems, axialSkeletonItems, appendicularSkeletonItems, combos, federativeUnits } from "@/utils/options"
 import { toast } from "sonner"
 import { useAuth } from "@/contexts/auth-context"
 import { NavbarHeader } from "@/components/navbar-header"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from "next/navigation"
 import { RequestErrorClient } from "@/types/request"
+import { UserType } from "@/types/user"
+import { CustomAlertDialog } from "@/components/custom-alert-dialog"
+import { SendExamRequest } from "@/validations/send-exam-validation"
+import { sendExamRequest } from "@/http/send-exam-request"
 
 export default function ExamRequestPage() {
 	const router = useRouter()
 	const { isLoading, setIsLoading } = useLoading()
 	const { user } = useAuth()
-	const disableVeterinarianNameInput = user ? user.type === "veterinarian" : false
+
+	const [isAlertOpen, setIsAlertOpen] = useState(false)
+	const [canCloseAlert, setCanCloseAlert] = useState(false)
+	const [examRequestSent, setExamRequestSent] = useState(false)
+	const [sendExamRequestProps, setSendExamRequestProps] = useState<SendExamRequest>({
+		veterinarianClinic: "",
+		veterinarianName: "",
+		patientName: "",
+		reportUrl: ""
+	})
+
+	const disableVeterinarianNameInput = user ? user.type === UserType.Veterinarian : false
+	const canSendToWhatsapp = user ? user.canSendWhatsapp : false
 
 	const form = useForm<ExamRequest>({
 		resolver: zodResolver(ExamRequestSchema),
 		defaultValues: {
 			veterinarianClinic: "",
 			veterinarianName: "",
+			veterinarianCrmv: "",
+			veterinarianUf: "",
 			patientName: "",
 			patientSpecies: "",
 			patientSex: "",
@@ -66,8 +84,10 @@ export default function ExamRequestPage() {
 	})
 
 	useEffect(() => {
-		if (user && user.type === "veterinarian") {
+		if (user && user.type === UserType.Veterinarian) {
 			form.setValue("veterinarianName", user.name)
+			form.setValue("veterinarianCrmv", user.crmv)
+			form.setValue("veterinarianUf", user.uf)
 		}
 	}, [user])
 
@@ -77,7 +97,13 @@ export default function ExamRequestPage() {
 		try {
 			const { message, data } = await generateExamRequest(values)
 	
-			console.log(data?.url)
+			setSendExamRequestProps({
+				veterinarianClinic: values.veterinarianClinic,
+				veterinarianName: values.veterinarianName,
+				patientName: values.patientName,
+				reportUrl: data.url
+			})
+			setIsAlertOpen(true)
 	
 			toast.success(message.clientMessage)
 		} catch (error: any) {
@@ -90,7 +116,41 @@ export default function ExamRequestPage() {
 			}
 		} finally {
 			setIsLoading(false)
-		}		
+		}
+	}
+
+	function handleCloseAlert() {
+		setIsAlertOpen(false)
+		setCanCloseAlert(false)
+		setExamRequestSent(false)
+	}
+
+	function handleDownload() {
+		window.open(sendExamRequestProps.reportUrl, "_blank")
+		setCanCloseAlert(true)
+	}
+
+	async function handleSendToSoundvetX() {
+		toast.info("Enviando para SoundvetX...")
+		setIsLoading(true)
+
+		try {
+			const { message } = await sendExamRequest(sendExamRequestProps)
+	
+			toast.success(message.clientMessage)
+			setExamRequestSent(true)
+			setCanCloseAlert(true)
+		} catch (error: any) {
+			const { status, message } = error as RequestErrorClient
+			console.error(message.serverMessage)
+			toast.error(message.clientMessage)
+
+			if (status === 401) {
+				router.replace("/login")
+			}
+		} finally {
+			setIsLoading(false)
+		}
 	}
 
 	return (
@@ -109,13 +169,30 @@ export default function ExamRequestPage() {
 						className="flex flex-col w-full gap-8 mt-6"
 					>
 						<FormSection title="Dados do Requerente">
-							<FormGrid cols={2}>
+							<FormField
+								control={form.control}
+								name="veterinarianClinic"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Clínica Veterinária</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormGrid cols={3}>
 								<FormField
 									control={form.control}
 									name="veterinarianName"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Médica(o) Veterinária(o)</FormLabel>
+											<FormDescription>
+												Nome completo do(a) Médico(a) Veterinário(a)
+											</FormDescription>
 											<FormControl>
 												{user ? (
 													<Input {...field} disabled={disableVeterinarianNameInput} />
@@ -130,12 +207,58 @@ export default function ExamRequestPage() {
 
 								<FormField
 									control={form.control}
-									name="veterinarianClinic"
+									name="veterinarianCrmv"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Clínica Veterinária</FormLabel>
+											<FormLabel>CRMV do(a) Veterinário(a)</FormLabel>
+											<FormDescription>
+												Número de inscrição no Conselho Regional de Medicina Veterinária
+											</FormDescription>
 											<FormControl>
-												<Input {...field} />
+												{user ? (
+													<Input placeholder="00000" {...field} disabled={disableVeterinarianNameInput} />
+												) : (
+													<Skeleton className="h-[35px]" />
+												)}
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name="veterinarianUf"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>UF</FormLabel>
+											<FormDescription>
+												Unidade Federativa referente ao CRMV
+											</FormDescription>
+											<FormControl>
+												{user ? (
+													<Select
+														onValueChange={field.onChange}
+														defaultValue={user.type === UserType.Veterinarian ? user.uf : field.value}
+														disabled={disableVeterinarianNameInput}
+													>
+														<SelectTrigger>
+															<SelectValue />
+														</SelectTrigger>
+														<SelectContent>
+															{federativeUnits.map(item => (
+																<SelectItem
+																	key={item.abbreviation}
+																	value={`${item.name} (${item.abbreviation})`}
+																>
+																	{item.name} ({item.abbreviation})
+																</SelectItem>
+															))}
+														</SelectContent>
+													</Select>
+												) : (
+													<Skeleton className="h-[35px]" />
+												)}
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -412,6 +535,20 @@ export default function ExamRequestPage() {
 					</form>
 				</Form>
 			</main>
+
+			<CustomAlertDialog
+				title="Arquivo de Requisição de Exame"
+				description="O arquivo de requisição de exame foi gerado com sucesso. O que deseja fazer?"
+				cancelText="Fechar"
+				confirmText="Fazer Download"
+				secondaryButtonText={canSendToWhatsapp ? "Enviar para SoundvetX" : undefined}
+				onCancel={handleCloseAlert}
+				onConfirm={handleDownload}
+				onSecondaryButton={handleSendToSoundvetX}
+				hideCancelButton={!canCloseAlert}
+				hideSecondaryButton={examRequestSent}
+				isOpen={isAlertOpen}
+			/>
 		</>
 	)
 }

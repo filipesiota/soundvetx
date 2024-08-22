@@ -2,14 +2,14 @@ import { malformedBodyRequest, validateParam } from "@/utils/request"
 import { ComboReturn } from "@/types/combo-return"
 import { RequestError } from "@/types/request"
 
-interface SendReportRequest {
+export interface SendExamRequest {
 	veterinarianClinic: string
 	veterinarianName: string
 	patientName: string
 	reportUrl: string
 }
 
-export function validateSendReportRequest(data: any): ComboReturn<SendReportRequest, RequestError> {
+export function validateSendExamRequest(data: any): ComboReturn<SendExamRequest, RequestError> {
 	if (data === null || typeof data !== "object") {
 		return {
 			data: null,
@@ -48,7 +48,7 @@ export function validateSendReportRequest(data: any): ComboReturn<SendReportRequ
 		}
 
 	return {
-		data: data as SendReportRequest,
+		data: data as SendExamRequest,
 		error: null
 	}
 }

@@ -1,34 +1,54 @@
 import { RequestError, RequestResponse } from "@/types/request"
-import { validateSendReportRequest } from "@/validations/send-report-validation"
+import { SendExamRequest, validateSendExamRequest } from "@/validations/send-exam-validation"
 import { sendMessage } from "@/utils/wa-message-sender"
 import { NextRequest, NextResponse } from "next/server"
-
-export interface SendReportRequest {
-	veterinarianClinic: string
-	veterinarianName: string
-	patientName: string
-	reportUrl: string
-}
+import { decodeJwt } from "jose"
 
 export async function POST(
 	request: NextRequest
 ): Promise<NextResponse<RequestResponse<boolean> | RequestError>> {
+	const token = request.cookies.get("soundvetx-token")
+
+	if (!token?.value) {
+		return NextResponse.json(
+			{
+				message: {
+					serverMessage: "User is not authenticated",
+					clientMessage: "Você não tem permissão para acessar este recurso."
+				}
+			},
+			{ status: 401 }
+		)
+	}
+
+	const canSendWhatsapp = decodeJwt(token.value).canSendWhatsapp ?? false
+
+	if (!canSendWhatsapp) {
+		return NextResponse.json(
+			{
+				message: {
+					serverMessage: "User is not authorized",
+					clientMessage: "Você não tem permissão para acessar este recurso."
+				}
+			},
+			{ status: 401 }
+		)
+	}
+	
 	const body = await request.json()
-	const { data: validationData, error: validationError } = validateSendReportRequest(body)
+	const { data: validationData, error: validationError } = validateSendExamRequest(body)
 
 	if (validationError !== null) {
 		return NextResponse.json(validationError, { status: 400 })
 	}
 
+	const { veterinarianClinic, veterinarianName, patientName, reportUrl } = validationData as SendExamRequest
+
 	const { error: messageError } = await sendMessage({
 		text: `
-			Nova solicitação de exame de raio-x recebida.\n\n
-			
-			*Nome da clínica:* ${validationData?.veterinarianClinic}\n
-			*Nome do(a) médico(a) veterinário(a):* ${validationData?.veterinarianName}\n
-			*Nome do paciente:* ${validationData?.patientName}
+			Nova solicitação de exame de raio-x recebida.\n\n*Nome da clínica:* ${veterinarianClinic}\n*Nome do(a) médico(a) veterinário(a):* ${veterinarianName}\n*Nome do paciente:* ${patientName}
 		`,
-		mediaUrl: [validationData?.reportUrl as string]
+		mediaUrl: [reportUrl as string]
 	})
 
 	if (messageError !== null) {
@@ -39,7 +59,7 @@ export async function POST(
 		{
 			message: {
 				serverMessage: "Report sent successfully",
-				clientMessage: "Exame enviado com sucesso."
+				clientMessage: "Requisição de exame enviada com sucesso."
 			},
 			data: true
 		},

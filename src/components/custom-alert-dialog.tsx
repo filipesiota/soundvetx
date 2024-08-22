@@ -15,24 +15,41 @@ interface CustomAlertDialogProps {
 	description: string
 	cancelText?: string
 	confirmText?: string
+	secondaryButtonText?: string
 	onCancel?: () => void
 	onConfirm: () => void
+	onSecondaryButton?: () => void
+	hideCancelButton?: boolean
+	hideSecondaryButton?: boolean
     isOpen: boolean
 }
 
 const CustomAlertDialog = React.forwardRef<HTMLDivElement, CustomAlertDialogProps>(
-	({ title, description, cancelText = "Cancelar", confirmText = "Confirmar", onCancel, onConfirm, isOpen }, ref) => {
+	({
+		title,
+		description,
+		cancelText = "Cancelar",
+		confirmText = "Confirmar",
+		secondaryButtonText,
+		onCancel,
+		onConfirm,
+		onSecondaryButton,
+		hideCancelButton = false,
+		hideSecondaryButton = true,
+		isOpen
+	}, ref) => {
 		return (
 			<AlertDialog open={isOpen}>
-				<AlertDialogContent>
+				<AlertDialogContent ref={ref}>
 					<AlertDialogHeader>
 						<AlertDialogTitle>{title}</AlertDialogTitle>
 						<AlertDialogDescription>{description}</AlertDialogDescription>
 					</AlertDialogHeader>
 
 					<AlertDialogFooter>
-						<AlertDialogCancel onClick={onCancel}>{cancelText}</AlertDialogCancel>
+						{!hideCancelButton && <AlertDialogCancel onClick={onCancel}>{cancelText}</AlertDialogCancel>}
 						<AlertDialogAction onClick={onConfirm}>{confirmText}</AlertDialogAction>
+						{!hideSecondaryButton && <AlertDialogAction onClick={onSecondaryButton}>{secondaryButtonText}</AlertDialogAction>}
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>

@@ -8,6 +8,9 @@ import { RequestError } from "@/types/request"
 import { ExamRequest } from "@/schemas/exam-request-schema"
 
 function decorateTemplateContent(template: string, formData: ExamRequest): string {
+	const veterinarianUfMatches = formData.veterinarianUf.match(/\(([^)]+)\)/);
+	const veterinarianUf = veterinarianUfMatches ? veterinarianUfMatches[1] : formData.veterinarianUf;
+
 	const examItems: string[] = Array().concat(
 		formData.softTissues ?? [],
 		formData.skullItems ?? [],
@@ -41,6 +44,9 @@ function decorateTemplateContent(template: string, formData: ExamRequest): strin
 		year: "numeric"
 	})
 
+	template = template.replaceAll("{{ veterinarianName }}", formData.veterinarianName)
+	template = template.replaceAll("{{ veterinarianCrmv }}", formData.veterinarianCrmv)
+	template = template.replaceAll("{{ veterinarianUf }}", veterinarianUf)
 	template = template.replaceAll("{{ patientName }}", formData.patientName)
 	template = template.replaceAll("{{ patientSpecies }}", formData.patientSpecies)
 	template = template.replaceAll("{{ patientBreed }}", formData.patientBreed)
@@ -59,7 +65,7 @@ export async function generateExamRequestFile(formData: ExamRequest): Promise<Co
 		const browser = await puppeteer.launch({
 			args: chromium.args,
 			defaultViewport: chromium.defaultViewport,
-			executablePath: await chromium.executablePath(),
+			executablePath: process.env.WINDOWS_CHROME_PATH || await chromium.executablePath(),
 			headless: chromium.headless
 		})
 		const page = await browser.newPage()

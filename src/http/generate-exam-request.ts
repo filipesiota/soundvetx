@@ -1,5 +1,5 @@
 import { ExamRequest } from "@/schemas/exam-request-schema";
-import { RequestResponse } from "@/types/request";
+import { RequestResponseClient } from "@/types/request";
 import { sendRequest } from "@/utils/request";
 
 interface ExamRequestResponseData {
@@ -9,6 +9,8 @@ interface ExamRequestResponseData {
 export async function generateExamRequest({
     veterinarianClinic,
     veterinarianName,
+    veterinarianCrmv,
+    veterinarianUf,
     patientName,
     patientSpecies,
     patientSex, 
@@ -24,12 +26,14 @@ export async function generateExamRequest({
     combos,
     observations
 }: ExamRequest) {
-    const { message, data }: RequestResponse<ExamRequestResponseData> = await sendRequest({
-        url: "/api/generate-report",
+    const { message, data }: RequestResponseClient<ExamRequestResponseData> = await sendRequest({
+        url: "/api/exam-requests/generate",
         method: "POST",
         data: {
             veterinarianClinic,
             veterinarianName,
+            veterinarianCrmv,
+            veterinarianUf,
             patientName,
             patientSpecies,
             patientSex, 

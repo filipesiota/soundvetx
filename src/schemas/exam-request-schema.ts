@@ -10,6 +10,12 @@ export const ExamRequestSchema = z.object({
 	veterinarianName: z.string().trim().min(1, {
 		message: "Este campo é obrigatório."
 	}),
+	veterinarianCrmv: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
+	veterinarianUf: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
 	patientName: z.string().trim().min(1, {
 		message: "Este campo é obrigatório."
 	}),
@@ -67,6 +73,20 @@ export function validateExamRequest(data: any): ComboReturn<ExamRequest, Request
 		}
 
 	error = validateParam(data, "veterinarianName", "string", true)
+	if (error !== null)
+		return {
+			data: null,
+			error: error
+		}
+
+	error = validateParam(data, "veterinarianCrmv", "string", true)
+	if (error !== null)
+		return {
+			data: null,
+			error: error
+		}
+
+	error = validateParam(data, "veterinarianUf", "string", true)
 	if (error !== null)
 		return {
 			data: null,
