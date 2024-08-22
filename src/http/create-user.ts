@@ -1,5 +1,5 @@
 import { UserCreateForm } from "@/schemas/user-schema";
-import { RequestResponse } from "@/types/request";
+import { RequestResponseClient } from "@/types/request";
 import { User } from "@/types/user";
 import { sendRequest } from "@/utils/request";
 
@@ -8,7 +8,7 @@ interface CreateUserResponseData {
 }
 
 export async function createUser({ type, fullName, email, password, confirmPassword, ...props }: UserCreateForm) {
-    const { message, data }: RequestResponse<CreateUserResponseData> = await sendRequest({
+    const { message, data }: RequestResponseClient<CreateUserResponseData> = await sendRequest({
         url: "/api/users",
         method: "POST",
         data: {

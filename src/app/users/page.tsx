@@ -24,6 +24,11 @@ export default function UsersPage() {
     const { setIsLoading } = useLoading()
     const [users, setUsers] = useState<User[]>([])
 
+    function handleCreateUser(user: User) {
+        users.push(user)
+        setUsers(users)
+    }
+
     function handleUpdateUser(user: User) {
         const items = users.map(item => {
             if (item.id === user.id) {
@@ -166,6 +171,13 @@ export default function UsersPage() {
 					size="small"
 					title="Gerenciamento de usuários"
 				/>
+
+                <div className="flex flex-row justify-end w-full mb-2">
+                    <UserFormDialog
+                        state={FormState.Create}
+                        onClose={handleCreateUser}
+                    />
+                </div>
 
                 <Table>
                     <TableHeader>
