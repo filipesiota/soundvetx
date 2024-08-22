@@ -123,6 +123,7 @@ export default function ExamRequestPage() {
 		setIsAlertOpen(false)
 		setCanCloseAlert(false)
 		setExamRequestSent(false)
+		form.reset()
 	}
 
 	function handleDownload() {
