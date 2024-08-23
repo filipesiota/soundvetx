@@ -121,6 +121,7 @@ const UserCreateDialog = React.forwardRef<HTMLFormElement, UserCreateDialogProps
 					<DialogContent
 						disableOutsideClick
 						onClose={onCloseDialog}
+						className="responsive-dialog"
 					>
 						<DialogHeader>
 							<DialogTitle>Cadastrar usuário</DialogTitle>
@@ -388,6 +389,7 @@ const UserUpdateDialog = React.forwardRef<HTMLFormElement, UserUpdateDialogProps
 				<DialogContent
 					disableOutsideClick
 					onClose={onCloseDialog}
+					className="responsive-dialog"
 				>
 					<DialogHeader>
 						<DialogTitle>Editar usuário</DialogTitle>

@@ -87,4 +87,9 @@
 	.loading-background {
 		background-color: var(--loading-background);
 	}
+
+	.responsive-dialog {
+		width: 95% !important;
+		@apply max-w-md max-h-[95%] overflow-y-auto rounded-lg
+	}
 }

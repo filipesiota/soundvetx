@@ -172,7 +172,7 @@ export default function UsersPage() {
 					title="Gerenciamento de usuários"
 				/>
 
-                <div className="flex flex-row justify-end w-full mb-2">
+                <div className="flex flex-row justify-end w-full my-4">
                     <UserFormDialog
                         state={FormState.Create}
                         onClose={handleCreateUser}
@@ -187,7 +187,7 @@ export default function UsersPage() {
                             <TableHead className="min-w-[150px]">E-mail</TableHead>
                             <TableHead className="min-w-[100px]">CRMV</TableHead>
                             <TableHead className="min-w-[200px]">UF</TableHead>
-                            <TableHead className="min-w-[100px] text-right">Pode mandar WhatsApp?</TableHead>
+                            <TableHead className="min-w-[200px] text-right">Pode mandar WhatsApp?</TableHead>
                             <TableHead className="min-w-[100px]"></TableHead>
                         </TableRow>
                     </TableHeader>

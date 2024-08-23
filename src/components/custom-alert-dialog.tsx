@@ -40,7 +40,7 @@ const CustomAlertDialog = React.forwardRef<HTMLDivElement, CustomAlertDialogProp
 	}, ref) => {
 		return (
 			<AlertDialog open={isOpen}>
-				<AlertDialogContent ref={ref}>
+				<AlertDialogContent ref={ref} className="responsive-dialog">
 					<AlertDialogHeader>
 						<AlertDialogTitle>{title}</AlertDialogTitle>
 						<AlertDialogDescription>{description}</AlertDialogDescription>
