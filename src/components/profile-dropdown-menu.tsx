@@ -1,3 +1,5 @@
+"use client"
+
 import {
 	LogOut,
 	User as UserIcon,
@@ -19,6 +21,7 @@ import { User, UserType } from "@/types/user"
 import { UserTypes } from "@/utils/options"
 import { getAbbreviationFromUf } from "@/utils/get-abbreviation-from-uf"
 import { useAuth } from "@/contexts/auth-context"
+import { useRouter } from "next/navigation"
 
 interface ProfileDropdownMenuProps extends React.HTMLAttributes<HTMLDivElement> {
 	user: User
@@ -26,6 +29,7 @@ interface ProfileDropdownMenuProps extends React.HTMLAttributes<HTMLDivElement> 
 
 const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenuProps>(
 	({ user }, ref) => {
+	const router = useRouter()
 	const { signOut } = useAuth()
 
 	const userTypeName = UserTypes.find((type) => type.value === user.type)?.label
@@ -47,7 +51,7 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<DropdownMenuItem className="cursor-pointer">
+					<DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profile")}>
 						<UserIcon className="mr-2 h-4 w-4" />
 						<span>Perfil</span>
 					</DropdownMenuItem>

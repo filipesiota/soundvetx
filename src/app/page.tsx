@@ -530,9 +530,11 @@ export default function ExamRequestPage() {
 							</FormDescription>
 						</FormSection>
 
-						<Button type="submit" disabled={isLoading}>
-							Enviar
-						</Button>
+						<div className="flex justify-end">
+							<Button type="submit" disabled={isLoading} className="px-14">
+								Enviar
+							</Button>
+						</div>
 					</form>
 				</Form>
 			</main>

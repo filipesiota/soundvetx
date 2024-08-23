@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from "react"
 import { ArchiveRestore, Trash } from "lucide-react"
 
