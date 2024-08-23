@@ -6,7 +6,7 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { cva, VariantProps } from "class-variance-authority"
 
-const navbarItemVariants = cva("no-underline transition-colors py-2 px-4 rounded-sm hover:no-underline", {
+const navbarItemVariants = cva("no-underline transition-colors py-2 px-4 rounded-sm hover:no-underline text-center", {
 	variants: {
 		selected: {
 			true: "text-background bg-foreground opacity-85",
@@ -50,6 +50,7 @@ const NavbarItem = React.forwardRef<HTMLAnchorElement, NavbarItemProps>(
 		)
 	}
 )
+
 NavbarItem.displayName = "NavbarItem"
 
 export { NavbarItem }

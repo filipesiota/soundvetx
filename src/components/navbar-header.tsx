@@ -6,43 +6,40 @@ import { useAuth } from "@/contexts/auth-context"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Navbar } from "@/components/navbar"
 import { cn } from "@/lib/utils"
+import { ProfileDropdownMenu } from "./profile-dropdown-menu"
+import { SideNavbar } from "./side-navbar"
 
 interface NavbarHeaderProps extends React.HTMLAttributes<HTMLHeadingElement> {}
 
 const NavbarHeader = React.forwardRef<HTMLHeadingElement, NavbarHeaderProps>(
 	({ className, ...props }, ref) => {
-        const { signOut, user } = useAuth()
+        const { user } = useAuth()
 
 		return (
             <header
                 ref={ref}
-                className={cn("flex flex-row items-center justify-between w-full max-w-screen-xl mx-auto py-4", className)}
+                className={cn("flex flex-row items-center justify-between w-full max-w-screen-xl mx-auto py-4 px-4", className)}
                 {...props}
             >
+                {user ? (
+                    <SideNavbar className="sm:hidden" />
+                ) : (
+                    <Skeleton className="sm:hidden h-[40px] w-[40px]" />
+                )}
+
                 <h1 className="text-2xl font-medium">SoundvetX</h1>
 
                 {user ? (
-                    <Navbar />
+                    <Navbar className="hidden sm:flex" />
                 ) : (
-                    <Skeleton className="h-[40px] w-[300px]" />
+                    <Skeleton className="hidden sm:block h-[40px] w-[300px]" />
                 )}
 
-                <div className="flex flex-row items-center gap-3">
-                    <div className="flex flex-col text-end text-sm leading-tight">
-                        <span>{user?.name}</span>
-
-                        {user ? ( user.type === "veterinarian" ? (
-                            <span>CRMV: {user?.crmv}</span>
-                        ) : (
-                            <span>Administrador</span>
-                        ) ) : (
-                            <Skeleton className="h-[40px] w-[150px]" />
-                        )}
-                    </div>
-                    <button type="button" onClick={signOut}>
-                        <LogOut className="h-6" />
-                    </button>
-                </div>
+                {user ? (
+                    <ProfileDropdownMenu user={user} />
+                ) : (
+                    <Skeleton className="h-[40px] w-[40px]" />
+                )}
             </header>
 		)
 	}

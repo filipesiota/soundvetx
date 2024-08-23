@@ -6,10 +6,10 @@ import path from "path"
 import { ComboReturn } from "@/types/combo-return"
 import { RequestError } from "@/types/request"
 import { ExamRequest } from "@/schemas/exam-request-schema"
+import { getAbbreviationFromUf } from "@/utils/get-abbreviation-from-uf"
 
 function decorateTemplateContent(template: string, formData: ExamRequest): string {
-	const veterinarianUfMatches = formData.veterinarianUf.match(/\(([^)]+)\)/);
-	const veterinarianUf = veterinarianUfMatches ? veterinarianUfMatches[1] : formData.veterinarianUf;
+	const veterinarianUf = getAbbreviationFromUf(formData.veterinarianUf)
 
 	const examItems: string[] = Array().concat(
 		formData.softTissues ?? [],

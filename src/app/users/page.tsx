@@ -166,7 +166,7 @@ export default function UsersPage() {
         <>
             <NavbarHeader />
 
-            <main className="flex flex-col items-center w-full max-w-screen-xl mx-auto py-8">
+            <main className="flex flex-col items-center w-full max-w-screen-xl mx-auto py-8 px-4">
 				<MainTitle
 					size="small"
 					title="Gerenciamento de usuários"
