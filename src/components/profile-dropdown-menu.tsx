@@ -41,8 +41,9 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent className="w-56" ref={ref}>
-				<DropdownMenuLabel>
-					{user.name}<br/>{userLabel}
+				<DropdownMenuLabel className="flex flex-col gap-0">
+					<span className="md:hidden">{user.name}</span>
+					<span>{userLabel}</span>
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>

@@ -22,23 +22,29 @@ const NavbarHeader = React.forwardRef<HTMLHeadingElement, NavbarHeaderProps>(
                 {...props}
             >
                 {user ? (
-                    <SideNavbar className="sm:hidden" />
+                    <SideNavbar className="md:hidden" />
                 ) : (
-                    <Skeleton className="sm:hidden h-[40px] w-[40px]" />
+                    <Skeleton className="md:hidden h-[40px] w-[40px]" />
                 )}
 
                 <h1 className="text-2xl font-medium">SoundvetX</h1>
 
                 {user ? (
-                    <Navbar className="hidden sm:flex" />
+                    <Navbar className="hidden md:flex" />
                 ) : (
-                    <Skeleton className="hidden sm:block h-[40px] w-[300px]" />
+                    <Skeleton className="hidden md:block h-[40px] w-[300px]" />
                 )}
 
                 {user ? (
-                    <ProfileDropdownMenu user={user} />
+                    <div className="flex flex-row gap-1 items-center">
+                        <span className="hidden md:block text-sm">{user.name}</span>
+                        <ProfileDropdownMenu user={user} />
+                    </div>
                 ) : (
-                    <Skeleton className="h-[40px] w-[40px]" />
+                    <div className="flex flex-row gap-1 items-center">
+                        <Skeleton className="hidden md:block h-[40px] w-[150px]" />
+                        <Skeleton className="h-[40px] w-[40px]" />
+                    </div>
                 )}
             </header>
 		)
