@@ -1,7 +1,7 @@
 "use client"
 
 import { MainTitle } from "@/components/main-title";
-import { NavbarHeader } from "@/components/navbar-header";
+import { Header } from "@/components/header";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { useLoading } from "@/contexts/loading-context";
@@ -18,6 +18,7 @@ import { UserFormDialog } from "@/components/user-form-dialog";
 import { UserTypes } from "@/utils/options";
 import { FormState } from "@/types/form";
 import { ToggleDeleteRestoreButton } from "@/components/toggle-delete-restore-button";
+import { Main } from "@/components/main";
 
 export default function UsersPage() {
     const router = useRouter()
@@ -164,9 +165,9 @@ export default function UsersPage() {
 
     return (
         <>
-            <NavbarHeader />
+            <Header />
 
-            <main className="flex flex-col items-center w-full max-w-screen-xl mx-auto py-8 px-4">
+            <Main>
 				<MainTitle
 					size="small"
 					title="Gerenciamento de usuários"
@@ -232,7 +233,7 @@ export default function UsersPage() {
                         })}
                     </TableBody>
                 </Table>
-            </main>
+            </Main>
         </>
     )
 }

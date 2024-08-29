@@ -1,9 +1,13 @@
 "use client"
 
+import React from "react"
+import { usePathname } from "next/navigation"
 import {
 	LogOut,
 	User as UserIcon,
-	CircleUser
+	CircleUser,
+	ListTodo,
+	Users
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -11,17 +15,15 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
-	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
-import React from "react"
 import { User, UserType } from "@/types/user"
 import { UserTypes } from "@/utils/options"
 import { getAbbreviationFromUf } from "@/utils/get-abbreviation-from-uf"
 import { useAuth } from "@/contexts/auth-context"
-import { useRouter } from "next/navigation"
+import { CustomDropdownMenuItem } from "./custom-dropdown-menu-item"
 
 interface ProfileDropdownMenuProps extends React.HTMLAttributes<HTMLDivElement> {
 	user: User
@@ -29,7 +31,7 @@ interface ProfileDropdownMenuProps extends React.HTMLAttributes<HTMLDivElement> 
 
 const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenuProps>(
 	({ user }, ref) => {
-	const router = useRouter()
+	const pathName = usePathname()
 	const { signOut } = useAuth()
 
 	const userTypeName = UserTypes.find((type) => type.value === user.type)?.label
@@ -49,18 +51,52 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 					<span className="md:hidden">{user.name}</span>
 					<span>{userLabel}</span>
 				</DropdownMenuLabel>
+
 				<DropdownMenuSeparator />
+
+				<DropdownMenuGroup>	
+					<CustomDropdownMenuItem
+						route="/users"
+						selected={pathName === "/users"}
+						needsAdminPrivileges={true}
+					>
+						<Users className="mr-2 h-4 w-4" />
+						<span>Usuários</span>
+					</CustomDropdownMenuItem>
+
+					<CustomDropdownMenuItem
+						route="/"
+						selected={pathName === "/"}
+						needsAdminPrivileges={false}
+					>
+						<ListTodo className="mr-2 h-4 w-4" />
+						<span>Formulário</span>
+					</CustomDropdownMenuItem>
+				</DropdownMenuGroup>
+
+				<DropdownMenuSeparator />
+
 				<DropdownMenuGroup>
-					<DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profile")}>
+					<CustomDropdownMenuItem
+						route="/profile"
+						selected={pathName === "/profile"}
+						needsAdminPrivileges={false}
+					>
 						<UserIcon className="mr-2 h-4 w-4" />
 						<span>Perfil</span>
-					</DropdownMenuItem>
+					</CustomDropdownMenuItem>
 				</DropdownMenuGroup>
+
 				<DropdownMenuSeparator />
-				<DropdownMenuItem className="cursor-pointer" onClick={signOut}>
+
+				<CustomDropdownMenuItem
+					onClick={signOut}
+					selected={false}
+					needsAdminPrivileges={false}
+				>
 					<LogOut className="mr-2 h-4 w-4" />
 					<span>Sair</span>
-				</DropdownMenuItem>
+				</CustomDropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	)

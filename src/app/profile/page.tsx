@@ -13,8 +13,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { FormSection } from "@/components/form-section"
-import { FormGrid } from "@/components/form-grid"
 import {
 	Select,
 	SelectContent,
@@ -23,26 +21,19 @@ import {
 	SelectValue
 } from "@/components/ui/select"
 import { MainTitle } from "@/components/main-title"
-import { CheckboxItem } from "@/components/checkbox-item"
-import { Textarea } from "@/components/ui/textarea"
 import { useLoading } from "@/contexts/loading-context"
-import { generateExamRequest } from "@/http/generate-exam-request"
-import { ExamRequest, ExamRequestSchema } from "@/schemas/exam-request-schema"
-import { softTissues, skullItems, axialSkeletonItems, appendicularSkeletonItems, combos, federativeUnits, UserTypes } from "@/utils/options"
+import { federativeUnits, UserTypes } from "@/utils/options"
 import { toast } from "sonner"
 import { useAuth } from "@/contexts/auth-context"
-import { NavbarHeader } from "@/components/navbar-header"
+import { Header } from "@/components/header"
 import { useEffect, useState } from "react"
-import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from "next/navigation"
 import { RequestErrorClient } from "@/types/request"
 import { UserType } from "@/types/user"
 import { CustomAlertDialog } from "@/components/custom-alert-dialog"
-import { SendExamRequest } from "@/validations/send-exam-validation"
-import { sendExamRequest } from "@/http/send-exam-request"
-import { formDataHasChanged } from "@/utils/form"
 import { updateUser } from "@/http/update-user"
 import { UserUpdateForm, UserUpdateSchema } from "@/schemas/user-schema"
+import { Main } from "@/components/main"
 
 export default function ExamRequestPage() {
     const router = useRouter()
@@ -116,9 +107,9 @@ export default function ExamRequestPage() {
 	
 	return (
 		<>
-            <NavbarHeader />
+            <Header />
 
-            <main className="flex flex-col items-center w-full max-w-screen-xl mx-auto py-8 px-4">
+            <Main>
                 <MainTitle
 					size="small"
 					title="Perfil"
@@ -251,7 +242,7 @@ export default function ExamRequestPage() {
                         </div>
                     </form>
                 </Form>
-            </main>
+            </Main>
 
             <CustomAlertDialog
 				title="Salvar alterações"

@@ -31,7 +31,7 @@ import { ExamRequest, ExamRequestSchema } from "@/schemas/exam-request-schema"
 import { softTissues, skullItems, axialSkeletonItems, appendicularSkeletonItems, combos, federativeUnits } from "@/utils/options"
 import { toast } from "sonner"
 import { useAuth } from "@/contexts/auth-context"
-import { NavbarHeader } from "@/components/navbar-header"
+import { Header } from "@/components/header"
 import { useEffect, useState } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from "next/navigation"
@@ -40,6 +40,7 @@ import { UserType } from "@/types/user"
 import { CustomAlertDialog } from "@/components/custom-alert-dialog"
 import { SendExamRequest } from "@/validations/send-exam-validation"
 import { sendExamRequest } from "@/http/send-exam-request"
+import { Main } from "@/components/main"
 
 export default function ExamRequestPage() {
 	const router = useRouter()
@@ -156,9 +157,9 @@ export default function ExamRequestPage() {
 
 	return (
 		<>
-			<NavbarHeader />
+			<Header />
 
-			<main className="flex flex-col items-center w-full max-w-screen-xl mx-auto py-8 px-4">
+			<Main>
 				<MainTitle
 					size="small"
 					title="Formulário para requisição de exame de imagem"
@@ -537,7 +538,7 @@ export default function ExamRequestPage() {
 						</div>
 					</form>
 				</Form>
-			</main>
+			</Main>
 
 			<CustomAlertDialog
 				title="Arquivo de Requisição de Exame"
