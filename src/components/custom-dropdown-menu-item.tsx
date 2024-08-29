@@ -13,7 +13,7 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
 const customDropdownMenuItemVariants = cva("cursor-pointer", {
 	variants: {
 		selected: {
-			true: "bg-accent text-accent-foreground",
+			true: "bg-accent text-accent-foreground pointer-events-none",
 			false: "",
 		}
 	},
@@ -25,6 +25,7 @@ const customDropdownMenuItemVariants = cva("cursor-pointer", {
 interface CustomDropdownMenuItemProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof customDropdownMenuItemVariants> {
     needsAdminPrivileges?: boolean
     route?: string
+    checkPageChangesAction?: (afterAction: () => void) => void
 }
 
 const CustomDropdownMenuItem = React.forwardRef<
@@ -39,6 +40,7 @@ React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
         selected,
         children,
         onClick,
+        checkPageChangesAction,
         ...props
     }, ref) => {
         const router = useRouter()
@@ -46,6 +48,19 @@ React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
         const hasAdminPrivileges = user ? user.type !== UserType.Veterinarian || !needsAdminPrivileges : false
 
         function handleClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+            if (checkPageChangesAction) {
+                let afterFunction = () => {};
+
+                if (onClick) {
+                    afterFunction = () => onClick(event)
+                } else if (route) {
+                    afterFunction = () => router.push(route)
+                }
+
+                checkPageChangesAction(afterFunction)
+                return
+            }
+
             if (onClick) {
                 onClick(event)
                 return

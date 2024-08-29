@@ -34,6 +34,8 @@ import { CustomAlertDialog } from "@/components/custom-alert-dialog"
 import { updateUser } from "@/http/update-user"
 import { UserUpdateForm, UserUpdateSchema } from "@/schemas/user-schema"
 import { Main } from "@/components/main"
+import { Skeleton } from "@/components/ui/skeleton"
+import { formDataHasChanged } from "@/utils/form"
 
 export default function ExamRequestPage() {
     const router = useRouter()
@@ -41,28 +43,32 @@ export default function ExamRequestPage() {
 	const { isLoading, setIsLoading } = useLoading()
 
 	const [isAlertOpen, setIsAlertOpen] = useState(false)
-	const [originalData, setOriginalData] = useState<UserUpdateForm>()
+    const [originalData, setOriginalData] = useState<UserUpdateForm>({
+        type: UserType.Veterinarian,
+        fullName: "",
+        crmv: "",
+        uf: "",
+        email: ""
+    })
+    const [afterAlertActionFunction, setAfterAlertActionFunction] = useState<() => void>(() => {})
 
 	const form = useForm<UserUpdateForm>({
         resolver: zodResolver(UserUpdateSchema),
-        defaultValues: {
-            type: UserType.Veterinarian,
-            fullName: "",
-            crmv: "",
-            uf: "",
-            email: ""
-        }
+        defaultValues: originalData
     })
 
     useEffect(() => {
         if (user) {
-            setOriginalData({
+            const currentValues: UserUpdateForm = {
                 type: user.type,
                 fullName: user.name,
                 crmv: user.type === UserType.Veterinarian ? user.crmv : "",
                 uf: user.type === UserType.Veterinarian ? user.uf : "",
                 email: user.email
-            })
+            }
+
+            setOriginalData(currentValues)
+            form.reset(currentValues)
         }
     }, [user])
 
@@ -80,7 +86,9 @@ export default function ExamRequestPage() {
             })
 
             toast.success(message.clientMessage)
-			setOriginalData(values)
+
+            setOriginalData(values)
+            form.reset(values)
         } catch (error: any) {
             const { status, message } = error as RequestErrorClient
             console.error(message.serverMessage)
@@ -97,17 +105,35 @@ export default function ExamRequestPage() {
 	function onConfirmAlert() {
 		form.handleSubmit(onSubmit)()
 		setIsAlertOpen(false)
+        afterAlertActionFunction()
 	}
 
-	function onCancelAlert() {
+	function onDiscardAlert() {
 		form.reset()
 		toast.info("Alterações descartadas")
+		setIsAlertOpen(false)
+        afterAlertActionFunction()
+	}
+
+    function onCancelAlert() {
 		setIsAlertOpen(false)
 	}
 	
 	return (
 		<>
-            <Header />
+            <Header
+                checkPageChangesAction={(afterFunction) => {
+                    console.log(formDataHasChanged(form.getValues(), originalData))
+
+                    if (formDataHasChanged(form.getValues(), originalData)) {
+                        setIsAlertOpen(true)
+                        setAfterAlertActionFunction(afterFunction)
+                        return 
+                    }
+
+                    afterFunction()
+                }}
+            />
 
             <Main>
                 <MainTitle
@@ -127,24 +153,28 @@ export default function ExamRequestPage() {
                                 <FormItem>
                                     <FormLabel>Tipo</FormLabel>
                                     <FormControl>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {UserTypes.map(item => (
-                                                    <SelectItem
-                                                        key={item.value}
-                                                        value={item.value}
-                                                    >
-                                                        {item.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        {user ? (
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={user.type}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {UserTypes.map(item => (
+                                                        <SelectItem
+                                                            key={item.value}
+                                                            value={item.value}
+                                                        >
+                                                            {item.label}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        ) : (
+                                            <Skeleton className="w-full h-[35px]"/>
+                                        )}
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -236,7 +266,7 @@ export default function ExamRequestPage() {
                         />
 
                         <div className="flex justify-end">
-                            <Button type="submit" disabled={isLoading}>
+                            <Button type="submit" disabled={!user || isLoading}>
                                 Salvar alterações
                             </Button>
                         </div>
@@ -247,10 +277,13 @@ export default function ExamRequestPage() {
             <CustomAlertDialog
 				title="Salvar alterações"
 				description="Deseja salvar as alterações feitas?"
-				cancelText="Descartar"
+				secondaryButtonText="Descartar"
 				confirmText="Salvar"
 				onCancel={onCancelAlert}
+                onSecondaryButton={onDiscardAlert}
 				onConfirm={onConfirmAlert}
+                hideSecondaryButton={false}
+                invertActionButtonOrder={true}
 				isOpen={isAlertOpen}
 			/>
 		</>

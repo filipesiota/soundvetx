@@ -39,7 +39,6 @@ const ToggleDeleteRestoreButton = React.forwardRef<HTMLButtonElement, ToggleDele
             <CustomAlertDialog
 				title={isDeleted ? "Restaurar usuário" : "Deletar usuário"}
 				description={`Deseja realmente ${isDeleted ? "restaurar" : "deletar"} este usuário?`} 
-				cancelText="Cancelar"
 				confirmText={isDeleted ? "Restaurar" : "Deletar"}
 				onCancel={onCancelAlert}
 				onConfirm={onConfirmAlert}

@@ -23,6 +23,7 @@ interface CustomAlertDialogProps {
 	onSecondaryButton?: () => void
 	hideCancelButton?: boolean
 	hideSecondaryButton?: boolean
+	invertActionButtonOrder?: boolean
     isOpen: boolean
 }
 
@@ -38,6 +39,7 @@ const CustomAlertDialog = React.forwardRef<HTMLDivElement, CustomAlertDialogProp
 		onSecondaryButton,
 		hideCancelButton = false,
 		hideSecondaryButton = true,
+		invertActionButtonOrder = false,
 		isOpen
 	}, ref) => {
 		return (
@@ -50,8 +52,9 @@ const CustomAlertDialog = React.forwardRef<HTMLDivElement, CustomAlertDialogProp
 
 					<AlertDialogFooter>
 						{!hideCancelButton && <AlertDialogCancel onClick={onCancel}>{cancelText}</AlertDialogCancel>}
+						{(!hideSecondaryButton && invertActionButtonOrder) && <AlertDialogAction onClick={onSecondaryButton}>{secondaryButtonText}</AlertDialogAction>}
 						<AlertDialogAction onClick={onConfirm}>{confirmText}</AlertDialogAction>
-						{!hideSecondaryButton && <AlertDialogAction onClick={onSecondaryButton}>{secondaryButtonText}</AlertDialogAction>}
+						{(!hideSecondaryButton && !invertActionButtonOrder) && <AlertDialogAction onClick={onSecondaryButton}>{secondaryButtonText}</AlertDialogAction>}
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>

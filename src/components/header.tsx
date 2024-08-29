@@ -7,10 +7,12 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { ProfileDropdownMenu } from "@/components/profile-dropdown-menu"
 
-interface HeaderProps extends React.HTMLAttributes<HTMLHeadingElement> {}
+interface HeaderProps extends React.HTMLAttributes<HTMLHeadingElement> {
+    checkPageChangesAction?: (afterAction: () => void) => void
+}
 
 const Header = React.forwardRef<HTMLHeadingElement, HeaderProps>(
-	({ className, ...props }, ref) => {
+	({ className, checkPageChangesAction, ...props }, ref) => {
         const { user } = useAuth()
 
 		return (
@@ -24,7 +26,10 @@ const Header = React.forwardRef<HTMLHeadingElement, HeaderProps>(
                 {user ? (
                     <div className="flex flex-row gap-1 items-center">
                         <span className="hidden md:block text-sm">{user.name}</span>
-                        <ProfileDropdownMenu user={user} />
+                        <ProfileDropdownMenu
+                            user={user}
+                            checkPageChangesAction={checkPageChangesAction}
+                        />
                     </div>
                 ) : (
                     <div className="flex flex-row gap-1 items-center">

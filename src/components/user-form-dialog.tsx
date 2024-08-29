@@ -83,12 +83,16 @@ const UserCreateDialog = React.forwardRef<HTMLFormElement, UserCreateDialogProps
 			form.handleSubmit(onSubmit)()
 			setIsAlertOpen(false)
 		}
-	
-		function onCancelAlert() {
+
+		function onDiscardAlert() {
 			form.reset()
 			toast.info("Dados descartados")
 			setIsAlertOpen(false)
 			setIsDialogOpen(false)
+		}
+
+		function onCancelAlert() {
+			setIsAlertOpen(false)
 		}
 	
 		return (
@@ -96,10 +100,13 @@ const UserCreateDialog = React.forwardRef<HTMLFormElement, UserCreateDialogProps
 				<CustomAlertDialog
 					title="Salvar usuário"
 					description="Deseja salvar este novo usuário?"
-					cancelText="Descartar"
+					secondaryButtonText="Descartar"
 					confirmText="Salvar"
 					onCancel={onCancelAlert}
+					onSecondaryButton={onDiscardAlert}
 					onConfirm={onConfirmAlert}
+					hideSecondaryButton={false}
+					invertActionButtonOrder={true}
 					isOpen={isAlertOpen}
 				/>
 	
@@ -354,11 +361,15 @@ const UserUpdateDialog = React.forwardRef<HTMLFormElement, UserUpdateDialogProps
 		setIsAlertOpen(false)
 	}
 
-	function onCancelAlert() {
+	function onDiscardAlert() {
 		form.reset()
 		toast.info("Alterações descartadas")
 		setIsAlertOpen(false)
 		setIsDialogOpen(false)
+	}
+
+	function onCancelAlert() {
+		setIsAlertOpen(false)
 	}
 	
 	return (
@@ -366,10 +377,13 @@ const UserUpdateDialog = React.forwardRef<HTMLFormElement, UserUpdateDialogProps
 			<CustomAlertDialog
 				title="Salvar alterações"
 				description="Deseja salvar as alterações feitas?"
-				cancelText="Descartar"
+				secondaryButtonText="Descartar"
 				confirmText="Salvar"
 				onCancel={onCancelAlert}
+				onSecondaryButton={onDiscardAlert}
 				onConfirm={onConfirmAlert}
+				hideSecondaryButton={false}
+				invertActionButtonOrder={true}
 				isOpen={isAlertOpen}
 			/>
 
