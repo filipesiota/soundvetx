@@ -25,6 +25,8 @@ const customDropdownMenuItemVariants = cva("cursor-pointer", {
 interface CustomDropdownMenuItemProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof customDropdownMenuItemVariants> {
     needsAdminPrivileges?: boolean
     route?: string
+    canNavigate?: boolean
+    beforeNavigate?: () => void
 }
 
 const CustomDropdownMenuItem = React.forwardRef<
@@ -39,6 +41,8 @@ React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
         selected,
         children,
         onClick,
+        canNavigate = true,
+        beforeNavigate = () => {},
         ...props
     }, ref) => {
         const router = useRouter()
@@ -46,6 +50,11 @@ React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
         const hasAdminPrivileges = user ? user.type !== UserType.Veterinarian || !needsAdminPrivileges : false
 
         function handleClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+            if (!canNavigate) {
+                beforeNavigate()
+                return
+            }
+
             if (onClick) {
                 onClick(event)
                 return

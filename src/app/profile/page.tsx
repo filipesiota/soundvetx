@@ -43,6 +43,7 @@ export default function ExamRequestPage() {
 	const { isLoading, setIsLoading } = useLoading()
 
 	const [isAlertOpen, setIsAlertOpen] = useState(false)
+    const [hasChanged, setHasChanged] = useState(false)
     const [originalData, setOriginalData] = useState<UserUpdateForm>({
         type: UserType.Veterinarian,
         fullName: "",
@@ -50,7 +51,6 @@ export default function ExamRequestPage() {
         uf: "",
         email: ""
     })
-    const [afterAlertActionFunction, setAfterAlertActionFunction] = useState<() => void>(() => {})
 
 	const form = useForm<UserUpdateForm>({
         resolver: zodResolver(UserUpdateSchema),
@@ -71,6 +71,10 @@ export default function ExamRequestPage() {
             form.reset(currentValues)
         }
     }, [user])
+
+    useEffect(() => {
+        setHasChanged(formDataHasChanged(originalData, form.getValues()))
+    }, [form.getValues()])
 
 	async function onSubmit(values: UserUpdateForm) {
         if (!user) {
@@ -104,14 +108,12 @@ export default function ExamRequestPage() {
 	function onConfirmAlert() {
 		form.handleSubmit(onSubmit)()
 		setIsAlertOpen(false)
-        afterAlertActionFunction()
 	}
 
 	function onDiscardAlert() {
 		form.reset()
 		toast.info("Alterações descartadas")
 		setIsAlertOpen(false)
-        afterAlertActionFunction()
 	}
 
     function onCancelAlert() {
@@ -120,7 +122,10 @@ export default function ExamRequestPage() {
 	
 	return (
 		<>
-            <Header/>
+            <Header
+                canNavigate={!hasChanged}
+                beforeNavigate={() => setIsAlertOpen(true)}
+            />
 
             <Main>
                 <MainTitle

@@ -27,10 +27,12 @@ import { CustomDropdownMenuItem } from "./custom-dropdown-menu-item"
 
 interface ProfileDropdownMenuProps extends React.HTMLAttributes<HTMLDivElement> {
 	user: User
+	canNavigate?: boolean
+	beforeNavigate?: () => void
 }
 
 const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenuProps>(
-	({ user }, ref) => {
+	({ user, canNavigate = true, beforeNavigate = () => {} }, ref) => {
 	const pathName = usePathname()
 	const { signOut } = useAuth()
 
@@ -59,6 +61,8 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 						route="/users"
 						selected={pathName === "/users"}
 						needsAdminPrivileges={true}
+						canNavigate={canNavigate}
+						beforeNavigate={beforeNavigate}
 					>
 						<Users className="mr-2 h-4 w-4" />
 						<span>Usuários</span>
@@ -68,6 +72,8 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 						route="/"
 						selected={pathName === "/"}
 						needsAdminPrivileges={false}
+						canNavigate={canNavigate}
+						beforeNavigate={beforeNavigate}
 					>
 						<ListTodo className="mr-2 h-4 w-4" />
 						<span>Formulário</span>
@@ -81,6 +87,8 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 						route="/profile"
 						selected={pathName === "/profile"}
 						needsAdminPrivileges={false}
+						canNavigate={canNavigate}
+						beforeNavigate={beforeNavigate}
 					>
 						<UserIcon className="mr-2 h-4 w-4" />
 						<span>Perfil</span>
@@ -93,6 +101,8 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 					onClick={signOut}
 					selected={false}
 					needsAdminPrivileges={false}
+					canNavigate={canNavigate}
+					beforeNavigate={beforeNavigate}
 				>
 					<LogOut className="mr-2 h-4 w-4" />
 					<span>Sair</span>
