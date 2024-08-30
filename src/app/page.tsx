@@ -109,7 +109,6 @@ export default function ExamRequestPage() {
 			toast.success(message.clientMessage)
 		} catch (error: any) {
 			const { status, message } = error as RequestErrorClient
-			console.error(message.serverMessage)
 			toast.error(message.clientMessage)
 
 			if (status === 401) {
@@ -144,7 +143,6 @@ export default function ExamRequestPage() {
 			setCanCloseAlert(true)
 		} catch (error: any) {
 			const { status, message } = error as RequestErrorClient
-			console.error(message.serverMessage)
 			toast.error(message.clientMessage)
 
 			if (status === 401) {

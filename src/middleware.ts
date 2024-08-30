@@ -120,6 +120,11 @@ export async function middleware(request: NextRequest) {
 		return NextResponse.next()
 	}
 
+	// Allow user that has a refresh token
+	if (!authToken && refreshToken) {
+		return NextResponse.next()
+	}
+
 	// Redirect to login page if user is not authenticated
 	if (!authToken) {
 		return NextResponse.redirect(new URL("/login", request.url))

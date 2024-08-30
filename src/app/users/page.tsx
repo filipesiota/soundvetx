@@ -64,7 +64,6 @@ export default function UsersPage() {
             toast.success(message.clientMessage)
         } catch (error: any) {
             const { status, message } = error as RequestErrorClient
-            console.error(message.serverMessage)
             toast.error(message.clientMessage)
 
             if (status === 401) {
@@ -97,7 +96,6 @@ export default function UsersPage() {
             toast.success(message.clientMessage)
         } catch (error: any) {
             const { status, message } = error as RequestErrorClient
-            console.error(message.serverMessage)
             toast.error(message.clientMessage)
 
             if (status === 401) {
@@ -128,7 +126,6 @@ export default function UsersPage() {
             setUsers(items)
         } catch (error: any) {
             const { status, message } = error as RequestErrorClient
-            console.error(message.serverMessage)
             toast.error(message.clientMessage)
 
             if (status === 401) {
@@ -148,7 +145,6 @@ export default function UsersPage() {
             setUsers(data.users)
         } catch (error: any) {
             const { status, message } = error as RequestErrorClient
-			console.error(message.serverMessage)
 			toast.error(message.clientMessage)
 
 			if (status === 401) {

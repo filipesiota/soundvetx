@@ -91,7 +91,6 @@ export default function ExamRequestPage() {
             form.reset(values)
         } catch (error: any) {
             const { status, message } = error as RequestErrorClient
-            console.error(message.serverMessage)
             toast.error(message.clientMessage)
 
             if (status === 401) {
@@ -121,19 +120,7 @@ export default function ExamRequestPage() {
 	
 	return (
 		<>
-            <Header
-                checkPageChangesAction={(afterFunction) => {
-                    console.log(formDataHasChanged(form.getValues(), originalData))
-
-                    if (formDataHasChanged(form.getValues(), originalData)) {
-                        setIsAlertOpen(true)
-                        setAfterAlertActionFunction(afterFunction)
-                        return 
-                    }
-
-                    afterFunction()
-                }}
-            />
+            <Header/>
 
             <Main>
                 <MainTitle

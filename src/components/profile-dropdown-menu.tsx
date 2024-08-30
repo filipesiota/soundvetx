@@ -26,12 +26,11 @@ import { useAuth } from "@/contexts/auth-context"
 import { CustomDropdownMenuItem } from "./custom-dropdown-menu-item"
 
 interface ProfileDropdownMenuProps extends React.HTMLAttributes<HTMLDivElement> {
-	user: User,
-	checkPageChangesAction?: (afterAction: () => void) => void
+	user: User
 }
 
 const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenuProps>(
-	({ user, checkPageChangesAction }, ref) => {
+	({ user }, ref) => {
 	const pathName = usePathname()
 	const { signOut } = useAuth()
 
@@ -60,7 +59,6 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 						route="/users"
 						selected={pathName === "/users"}
 						needsAdminPrivileges={true}
-						checkPageChangesAction={checkPageChangesAction}
 					>
 						<Users className="mr-2 h-4 w-4" />
 						<span>Usuários</span>
@@ -70,7 +68,6 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 						route="/"
 						selected={pathName === "/"}
 						needsAdminPrivileges={false}
-						checkPageChangesAction={checkPageChangesAction}
 					>
 						<ListTodo className="mr-2 h-4 w-4" />
 						<span>Formulário</span>
@@ -84,7 +81,6 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 						route="/profile"
 						selected={pathName === "/profile"}
 						needsAdminPrivileges={false}
-						checkPageChangesAction={checkPageChangesAction}
 					>
 						<UserIcon className="mr-2 h-4 w-4" />
 						<span>Perfil</span>

@@ -69,7 +69,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			router.push(`/login?email=${email}&password=${password}`)
 		} catch (error: any) {
 			const { message, status } = error as RequestErrorClient
-			console.error(message.serverMessage)
 			toast.error(message.clientMessage)
 
 			if (status === 401) {
@@ -92,7 +91,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			router.push("/")
 		} catch (error: any) {
 			const { message, status } = error as RequestErrorClient
-			console.error(message.serverMessage)
 			toast.error(message.clientMessage)
 
 			if (status === 401) {
@@ -114,7 +112,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			router.replace("/login")
 		} catch (error: any) {
 			const { message, status } = error as RequestErrorClient
-			console.error(message.serverMessage)
 			toast.error(message.clientMessage)
 
 			if (status === 401) {

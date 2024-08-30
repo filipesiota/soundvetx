@@ -60,7 +60,6 @@ const UserCreateDialog = React.forwardRef<HTMLFormElement, UserCreateDialogProps
 				setIsDialogOpen(false)
 			} catch (error: any) {
 				const { status, message } = error as RequestErrorClient
-				console.error(message.serverMessage)
 				toast.error(message.clientMessage)
 	
 				if (status === 401) {
@@ -337,7 +336,6 @@ const UserUpdateDialog = React.forwardRef<HTMLFormElement, UserUpdateDialogProps
 			setIsDialogOpen(false)
         } catch (error: any) {
             const { status, message } = error as RequestErrorClient
-            console.error(message.serverMessage)
             toast.error(message.clientMessage)
 
             if (status === 401) {
