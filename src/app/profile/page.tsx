@@ -36,8 +36,9 @@ import { UserUpdateForm, UserUpdateSchema } from "@/schemas/user-schema"
 import { Main } from "@/components/main"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formDataHasChanged } from "@/utils/form"
+import { PasswordChangeDialog } from "@/components/password-form-dialog"
 
-export default function ExamRequestPage() {
+export default function ProfilePage() {
     const router = useRouter()
     const { user } = useAuth()
 	const { isLoading, setIsLoading } = useLoading()
@@ -132,6 +133,18 @@ export default function ExamRequestPage() {
 					size="small"
 					title="Perfil"
 				/>
+
+                <div className="flex gap-2 justify-end w-full">
+                    {user ? (
+                        <PasswordChangeDialog user={user}>
+                            <Button type="button" variant="outline">
+                                Alterar senha
+                            </Button>
+                        </PasswordChangeDialog>
+                    ) : (
+                        <Skeleton className="w-[100px] h-[35px]"/>
+                    )}
+                </div>
 
                 <Form {...form}>
                     <form
@@ -257,7 +270,7 @@ export default function ExamRequestPage() {
                             )}
                         />
 
-                        <div className="flex justify-end">
+                        <div className="flex gap-2 justify-end">
                             <Button type="submit" disabled={!user || isLoading}>
                                 Salvar alterações
                             </Button>

@@ -50,11 +50,11 @@ const CustomAlertDialog = React.forwardRef<HTMLDivElement, CustomAlertDialogProp
 						<AlertDialogDescription>{description}</AlertDialogDescription>
 					</AlertDialogHeader>
 
-					<AlertDialogFooter>
-						{!hideCancelButton && <AlertDialogCancel onClick={onCancel}>{cancelText}</AlertDialogCancel>}
-						{(!hideSecondaryButton && invertActionButtonOrder) && <AlertDialogAction onClick={onSecondaryButton}>{secondaryButtonText}</AlertDialogAction>}
-						<AlertDialogAction onClick={onConfirm}>{confirmText}</AlertDialogAction>
-						{(!hideSecondaryButton && !invertActionButtonOrder) && <AlertDialogAction onClick={onSecondaryButton}>{secondaryButtonText}</AlertDialogAction>}
+					<AlertDialogFooter className="gap-1">
+						{!hideCancelButton && <AlertDialogCancel className="m-0" onClick={onCancel}>{cancelText}</AlertDialogCancel>}
+						{(!hideSecondaryButton && invertActionButtonOrder) && <AlertDialogAction className="m-0" onClick={onSecondaryButton}>{secondaryButtonText}</AlertDialogAction>}
+						<AlertDialogAction className="m-0" onClick={onConfirm}>{confirmText}</AlertDialogAction>
+						{(!hideSecondaryButton && !invertActionButtonOrder) && <AlertDialogAction className="m-0" onClick={onSecondaryButton}>{secondaryButtonText}</AlertDialogAction>}
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
