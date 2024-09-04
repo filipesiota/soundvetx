@@ -48,7 +48,7 @@ const ToggleDeleteRestoreButton = React.forwardRef<HTMLButtonElement, ToggleDele
             <Button
                 ref={ref}
                 onClick={handleAction}
-                title={isDeleted ? "Restaurar" : "Deletar"}
+                title={isDeleted ? "Restaurar usuário" : "Deletar usuário"}
                 variant="outline"
                 size="icon"
             >

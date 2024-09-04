@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { Button, ButtonProps } from "@/components/ui/button"
 import { useLoading } from "@/contexts/loading-context"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { User } from "@/types/user"
@@ -19,12 +19,13 @@ import { PasswordChangeForm, PasswordChangeSchema } from "@/schemas/password-sch
 import { changeUserPassword } from "@/http/change-user-password"
 import { resetUserPassword } from "@/http/reset-user-password"
 
-interface PasswordResetDialogProps extends React.HTMLAttributes<HTMLDivElement> {
+interface PasswordResetDialogProps extends ButtonProps {
 	user: User
+	children: React.ReactNode
 }
 
 const PasswordResetDialog = React.forwardRef<HTMLButtonElement, PasswordResetDialogProps>(
-	({ user, children }, ref) => {
+	({ user, children, ...props }, ref) => {
 		const { setIsLoading } = useLoading()
 		const [isCheckAlertOpen, setIsCheckAlertOpen] = useState(false)
 		const [isAlertOpen, setIsAlertOpen] = useState(false)
@@ -57,6 +58,7 @@ const PasswordResetDialog = React.forwardRef<HTMLButtonElement, PasswordResetDia
 				toast.success(message.clientMessage)
 				setNewPassword(data.newPassword)
 				setNewPasswordMessage(`A nova senha é: ${data.newPassword}`)
+				setIsCheckAlertOpen(false)
 				setIsAlertOpen(true)
 			} catch (error: any) {
 				const { status, message } = error as RequestErrorClient
@@ -72,7 +74,7 @@ const PasswordResetDialog = React.forwardRef<HTMLButtonElement, PasswordResetDia
 	
 		return (
 			<>	
-				<Button ref={ref} className="flex gap-1 p-2" type="button" onClick={() => setIsCheckAlertOpen(true)}>
+				<Button ref={ref} className="flex gap-1 p-2" type="button" onClick={() => setIsCheckAlertOpen(true)} {...props} >
 					{children}
 				</Button>
 

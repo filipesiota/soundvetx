@@ -1,5 +1,6 @@
 import { decodeJwt, jwtVerify } from "jose"
 import { NextRequest, NextResponse } from "next/server"
+import { generateRegexFromPath } from "./utils/regex"
 
 export const config = {
 	matcher: [
@@ -32,7 +33,19 @@ const apiRoutes = {
 	admin: [
 		{
 			path: "/api/users",
-			allowedMethods: ["GET", "DELETE", "PATCH", "PUT"]
+			allowedMethods: ["GET", "DELETE", "PUT"]
+		},
+		{
+			path: "/api/users/{?}/restore",
+			allowedMethods: ["PATCH"]
+		},
+		{
+			path: "/api/users/{?}/can-send-whatsapp",
+			allowedMethods: ["PATCH"]
+		},
+		{
+			path: "/api/users/{?}/reset-password",
+			allowedMethods: ["PATCH"]
 		}
 	]
 }
@@ -64,7 +77,9 @@ export async function middleware(request: NextRequest) {
 
 	if (isApiRoute) {
 		const isUnauthenticatedRoute = apiRoutes.unauthenticated.some(route => {
-			return pathName.includes(route.path) && route.allowedMethods.includes(method)
+			const pathRegex = generateRegexFromPath(route.path);
+
+			return pathRegex.test(pathName) && route.allowedMethods.includes(method)
 		})
 
 		// Allow unauthenticated routes to pass through
@@ -86,7 +101,9 @@ export async function middleware(request: NextRequest) {
 			await jwtVerify(jwt, secret)
 
 			const isAdminRoute = apiRoutes.admin.some(route => {
-				return pathName.includes(route.path) && route.allowedMethods.includes(method)
+				const pathRegex = generateRegexFromPath(route.path);
+
+				return pathRegex.test(pathName) && route.allowedMethods.includes(method)
 			})
 
 			// Check if user has admin permission to access the route

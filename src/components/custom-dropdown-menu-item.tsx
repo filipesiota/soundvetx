@@ -66,16 +66,19 @@ React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
         }
 
 		return (
-            <DropdownMenuItem
-                key={route}
-                ref={ref}
-                className={cn(customDropdownMenuItemVariants({ selected }), className)}
-                onClick={handleClick}
-                hidden={!hasAdminPrivileges}
-                {...props}
-            >
-                {children}
-            </DropdownMenuItem>
+            <>
+                {hasAdminPrivileges && (
+                    <DropdownMenuItem
+                        key={route}
+                        ref={ref}
+                        className={cn(customDropdownMenuItemVariants({ selected }), className)}
+                        onClick={handleClick}
+                        {...props}
+                    >
+                        {children}
+                    </DropdownMenuItem>
+                )}
+            </>
 		)
 	}
 )

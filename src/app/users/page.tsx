@@ -19,6 +19,8 @@ import { UserTypes } from "@/utils/options";
 import { FormState } from "@/types/form";
 import { ToggleDeleteRestoreButton } from "@/components/toggle-delete-restore-button";
 import { Main } from "@/components/main";
+import { PasswordResetDialog } from "@/components/password-form-dialog";
+import { KeyRound } from "lucide-react";
 
 export default function UsersPage() {
     const router = useRouter()
@@ -212,6 +214,14 @@ export default function UsersPage() {
                                             state={FormState.Update}
                                             user={user}
                                             onClose={handleUpdateUser}
+                                        />
+
+                                        <PasswordResetDialog
+                                            user={user}
+                                            children={<KeyRound />}
+                                            size="icon"
+                                            variant="outline"
+                                            title="Redefinir senha"
                                         />
 
                                         <ToggleDeleteRestoreButton

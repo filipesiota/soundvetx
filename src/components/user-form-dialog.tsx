@@ -9,7 +9,7 @@ import { UserPlus, UserPen } from "lucide-react"
 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { Button, ButtonProps } from "@/components/ui/button"
 import { useLoading } from "@/contexts/loading-context"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -24,12 +24,12 @@ import { formDataHasChanged } from "@/utils/form"
 import { createUser } from "@/http/create-user"
 import { PasswordInput } from "@/components/password-input"
 
-interface UserCreateDialogProps {
+interface UserCreateDialogProps extends ButtonProps {
 	onClose: (user: User) => void
 }
 
-const UserCreateDialog = React.forwardRef<HTMLFormElement, UserCreateDialogProps>(
-	({ onClose }, ref) => {
+const UserCreateDialog = React.forwardRef<HTMLButtonElement, UserCreateDialogProps>(
+	({ onClose, ...props }, ref) => {
 		const { isLoading, setIsLoading } = useLoading()
 		const [isDialogOpen, setIsDialogOpen] = useState(false)
 		const [isAlertOpen, setIsAlertOpen] = useState(false)
@@ -115,9 +115,11 @@ const UserCreateDialog = React.forwardRef<HTMLFormElement, UserCreateDialogProps
 				>
 					<DialogTrigger asChild>
 						<Button
+							ref={ref}
 							variant="outline"
 							size="default"
 							className="flex items-center gap-2"
+							{...props}
 						>
 							<UserPlus className="size-5" />
 							Cadastrar usuário
@@ -140,7 +142,6 @@ const UserCreateDialog = React.forwardRef<HTMLFormElement, UserCreateDialogProps
 							<form
 								onSubmit={form.handleSubmit(onSubmit)}
 								className="flex flex-col w-full gap-4"
-								ref={ref}
 							>
 								<FormField
 									control={form.control}
@@ -298,13 +299,13 @@ const UserCreateDialog = React.forwardRef<HTMLFormElement, UserCreateDialogProps
 
 UserCreateDialog.displayName = "UserCreateDialog"
 
-interface UserUpdateDialogProps {
+interface UserUpdateDialogProps extends ButtonProps {
 	user: User
 	onClose: (user: User) => void
 }
 
-const UserUpdateDialog = React.forwardRef<HTMLFormElement, UserUpdateDialogProps>(
-	({ user, onClose }, ref) => {
+const UserUpdateDialog = React.forwardRef<HTMLButtonElement, UserUpdateDialogProps>(
+	({ user, onClose, ...props }, ref) => {
 	const { isLoading, setIsLoading } = useLoading()
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
 	const [isAlertOpen, setIsAlertOpen] = useState(false)
@@ -391,8 +392,10 @@ const UserUpdateDialog = React.forwardRef<HTMLFormElement, UserUpdateDialogProps
 			>
 				<DialogTrigger asChild>
 					<Button
+						ref={ref}
 						variant="outline"
 						size="icon"
+						{...props}
 					>
 						<UserPen />
 					</Button>
@@ -414,7 +417,6 @@ const UserUpdateDialog = React.forwardRef<HTMLFormElement, UserUpdateDialogProps
 						<form
 							onSubmit={form.handleSubmit(onSubmit)}
 							className="flex flex-col w-full gap-4"
-							ref={ref}
 						>
 							<FormField
 								control={form.control}
@@ -544,18 +546,18 @@ const UserUpdateDialog = React.forwardRef<HTMLFormElement, UserUpdateDialogProps
 
 UserUpdateDialog.displayName = "UserUpdateDialog"
 
-interface UserFormDialogProps {
+interface UserFormDialogProps extends ButtonProps {
     state: FormState,
 	user?: User,
 	onClose: (user: User) => void
 }
 
-const UserFormDialog = React.forwardRef<HTMLFormElement, UserFormDialogProps>(
+const UserFormDialog = React.forwardRef<HTMLButtonElement, UserFormDialogProps>(
 	({ state, user, onClose, ...props }, ref) => {
 	return state === FormState.Update && user ? (
-		<UserUpdateDialog ref={ref} user={user} onClose={onClose} />
+		<UserUpdateDialog ref={ref} user={user} onClose={onClose} title="Editar usuário" {...props} />
 	) : (
-		<UserCreateDialog ref={ref} onClose={onClose} />
+		<UserCreateDialog ref={ref} onClose={onClose} title="Cadastrar usuário" {...props} />
 	)
 })
 
