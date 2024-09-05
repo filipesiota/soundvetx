@@ -11,8 +11,7 @@ function decorateTemplateContent(template: string, formData: ExamRequest): strin
 	const examItems: string[] = Array().concat(
 		formData.softTissues ?? [],
 		formData.skullItems ?? [],
-		formData.axialSkeletonItems ?? [],
-		formData.appendicularSkeletonItems ?? []
+		formData.axialSkeletonItems ?? []
 	)
 
 	const examItemsContent =
