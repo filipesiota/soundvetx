@@ -41,15 +41,20 @@ export const ExamRequestSchema = z.object({
 	patientTutor: z.string().trim().min(1, {
 		message: "Este campo é obrigatório."
 	}),
-	examSuspicion: z.string().trim().min(1, {
+	chip: z.string().trim().min(1, {
 		message: "Este campo é obrigatório."
 	}),
-	examComplementaryDone: z.string().optional(),
+	paymentMethod: z.string().trim().min(1, {
+		message: "Este campo é obrigatório."
+	}),
 	softTissues: z.array(z.string()).optional(),
 	skullItems: z.array(z.string()).optional(),
 	axialSkeletonItems: z.array(z.string()).optional(),
-	appendicularSkeletonItems: z.array(z.string()).optional(),
-	combos: z.array(z.string()).optional(),
+	appendicularSkeletonThoracicLimb: z.string().optional(),
+	appendicularSkeletonThoracicLimbOptions: z.array(z.string()).optional(),
+	appendicularSkeletonPelvicLimb: z.string().optional(),
+	appendicularSkeletonPelvicLimbOptions: z.array(z.string()).optional(),
+	appendicularSkeletonPelvis: z.array(z.string()).optional(),
 	observations: z.string().optional()
 })
 
@@ -135,14 +140,14 @@ export function validateExamRequest(data: any): ComboReturn<ExamRequest, Request
 			error: error
 		}
 
-	error = validateParam(data, "examSuspicion", "string", true)
+	error = validateParam(data, "paymentMethod", "string", true)
 	if (error !== null)
 		return {
 			data: null,
 			error: error
 		}
 
-	error = validateParam(data, "examComplementaryDone", "string", false)
+	error = validateParam(data, "chip", "string", true)
 	if (error !== null)
 		return {
 			data: null,
@@ -170,14 +175,35 @@ export function validateExamRequest(data: any): ComboReturn<ExamRequest, Request
 			error: error
 		}
 
-	error = validateParam(data, "appendicularSkeletonItems", "string[]", false)
+	error = validateParam(data, "appendicularSkeletonThoracicLimb", "string[]", false)
 	if (error !== null)
 		return {
 			data: null,
 			error: error
 		}
 
-	error = validateParam(data, "combos", "string[]", false)
+	error = validateParam(data, "appendicularSkeletonThoracicLimbOptions", "string[]", false)
+	if (error !== null)
+		return {
+			data: null,
+			error: error
+		}
+
+	error = validateParam(data, "appendicularSkeletonPelvicLimb", "string[]", false)
+	if (error !== null)
+		return {
+			data: null,
+			error: error
+		}
+
+	error = validateParam(data, "appendicularSkeletonPelvicLimbOptions", "string[]", false)
+	if (error !== null)
+		return {
+			data: null,
+			error: error
+		}
+
+	error = validateParam(data, "appendicularSkeletonPelvis", "string[]", false)
 	if (error !== null)
 		return {
 			data: null,

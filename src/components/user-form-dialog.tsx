@@ -23,6 +23,7 @@ import { CustomAlertDialog } from "@/components/custom-alert-dialog"
 import { formDataHasChanged } from "@/utils/form"
 import { createUser } from "@/http/create-user"
 import { PasswordInput } from "@/components/password-input"
+import { Combobox } from "./combobox"
 
 interface UserCreateDialogProps extends ButtonProps {
 	onClose: (user: User) => void
@@ -218,24 +219,14 @@ const UserCreateDialog = React.forwardRef<HTMLButtonElement, UserCreateDialogPro
 														Unidade Federativa referente ao CRMV
 													</FormDescription>
 													<FormControl>
-														<Select
+														<Combobox
+															className="w-full"
 															onValueChange={field.onChange}
-															defaultValue={field.value}
-														>
-															<SelectTrigger>
-																<SelectValue placeholder="" />
-															</SelectTrigger>
-															<SelectContent>
-																{federativeUnits.map(item => (
-																	<SelectItem
-																		key={item.abbreviation}
-																		value={`${item.name} (${item.abbreviation})`}
-																	>
-																		{item.name} ({item.abbreviation})
-																	</SelectItem>
-																))}
-															</SelectContent>
-														</Select>
+															value={field.value}	
+															items={federativeUnits}
+															placeholder="Selecione uma UF"
+															searchPlaceholder="Pesquise por uma UF"
+														/>
 													</FormControl>
 													<FormMessage />
 												</FormItem>
@@ -493,24 +484,14 @@ const UserUpdateDialog = React.forwardRef<HTMLButtonElement, UserUpdateDialogPro
 													Unidade Federativa referente ao CRMV
 												</FormDescription>
 												<FormControl>
-													<Select
+													<Combobox
+														className="w-full"
 														onValueChange={field.onChange}
-														defaultValue={field.value}
-													>
-														<SelectTrigger>
-															<SelectValue placeholder="" />
-														</SelectTrigger>
-														<SelectContent>
-															{federativeUnits.map(item => (
-																<SelectItem
-																	key={item.abbreviation}
-																	value={`${item.name} (${item.abbreviation})`}
-																>
-																	{item.name} ({item.abbreviation})
-																</SelectItem>
-															))}
-														</SelectContent>
-													</Select>
+														value={field.value}	
+														items={federativeUnits}
+														placeholder="Selecione uma UF"
+														searchPlaceholder="Pesquise por uma UF"
+													/>
 												</FormControl>
 												<FormMessage />
 											</FormItem>

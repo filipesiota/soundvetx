@@ -29,6 +29,7 @@ import { useLoading } from "@/contexts/loading-context"
 import { federativeUnits } from "@/utils/options"
 import { UserCreateForm, UserCreateSchema } from "@/schemas/user-schema"
 import { UserType } from "@/types/user"
+import { Combobox } from "@/components/combobox"
 
 export default function RegisterPage() {
 	const { isLoading, setIsLoading } = useLoading()
@@ -103,24 +104,14 @@ export default function RegisterPage() {
 										Unidade Federativa referente ao CRMV
 									</FormDescription>
 									<FormControl>
-										<Select
+										<Combobox
+											className="w-full"
 											onValueChange={field.onChange}
-											defaultValue={field.value}
-										>
-											<SelectTrigger>
-												<SelectValue placeholder="" />
-											</SelectTrigger>
-											<SelectContent>
-												{federativeUnits.map(item => (
-													<SelectItem
-														key={item.abbreviation}
-														value={`${item.name} (${item.abbreviation})`}
-													>
-														{item.name} ({item.abbreviation})
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
+											value={field.value}	
+											items={federativeUnits}
+											placeholder="Selecione uma UF"
+											searchPlaceholder="Pesquise por uma UF"
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>

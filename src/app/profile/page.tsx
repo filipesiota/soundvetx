@@ -37,6 +37,7 @@ import { Main } from "@/components/main"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formDataHasChanged } from "@/utils/form"
 import { PasswordChangeDialog } from "@/components/password-form-dialog"
+import { Combobox } from "@/components/combobox"
 
 export default function ProfilePage() {
     const router = useRouter()
@@ -230,24 +231,14 @@ export default function ProfilePage() {
                                                 Unidade Federativa referente ao CRMV
                                             </FormDescription>
                                             <FormControl>
-                                                <Select
+                                                <Combobox
+                                                    className="w-full"
                                                     onValueChange={field.onChange}
-                                                    defaultValue={field.value}
-                                                >
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {federativeUnits.map(item => (
-                                                            <SelectItem
-                                                                key={item.abbreviation}
-                                                                value={`${item.name} (${item.abbreviation})`}
-                                                            >
-                                                                {item.name} ({item.abbreviation})
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
+                                                    value={field.value}	
+                                                    items={federativeUnits}
+                                                    placeholder="Selecione uma UF"
+                                                    searchPlaceholder="Pesquise por uma UF"
+                                                />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

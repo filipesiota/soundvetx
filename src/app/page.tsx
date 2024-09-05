@@ -15,20 +15,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { FormSection } from "@/components/form-section"
 import { FormGrid } from "@/components/form-grid"
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue
-} from "@/components/ui/select"
 import { MainTitle } from "@/components/main-title"
 import { CheckboxItem } from "@/components/checkbox-item"
 import { Textarea } from "@/components/ui/textarea"
 import { useLoading } from "@/contexts/loading-context"
 import { generateExamRequest } from "@/http/generate-exam-request"
 import { ExamRequest, ExamRequestSchema } from "@/schemas/exam-request-schema"
-import { softTissues, skullItems, axialSkeletonItems, appendicularSkeletonItems, combos, federativeUnits } from "@/utils/options"
+import { softTissues, skullItems, axialSkeletonItems, federativeUnits, paymentMethods, sexOptions, species, appendicularSkeletonThoracicLimb, appendicularSkeletonThoracicLimbOptions, appendicularSkeletonPelvicLimb, appendicularSkeletonPelvicLimbOptions, appendicularSkeletonPelvis } from "@/utils/options"
 import { toast } from "sonner"
 import { useAuth } from "@/contexts/auth-context"
 import { Header } from "@/components/header"
@@ -41,6 +34,7 @@ import { CustomAlertDialog } from "@/components/custom-alert-dialog"
 import { SendExamRequest } from "@/validations/send-exam-validation"
 import { sendExamRequest } from "@/http/send-exam-request"
 import { Main } from "@/components/main"
+import { Combobox } from "@/components/combobox"
 
 export default function ExamRequestPage() {
 	const router = useRouter()
@@ -70,16 +64,19 @@ export default function ExamRequestPage() {
 			patientName: "",
 			patientSpecies: "",
 			patientSex: "",
-			patientAge: undefined,
+			patientAge: 0,
 			patientBreed: "",
 			patientTutor: "",
-			examSuspicion: "",
-			examComplementaryDone: "",
+			chip: "",
+			paymentMethod: "",
 			softTissues: [],
 			skullItems: [],
 			axialSkeletonItems: [],
-			appendicularSkeletonItems: [],
-			combos: [],
+			appendicularSkeletonThoracicLimb: "",
+			appendicularSkeletonThoracicLimbOptions: [],
+			appendicularSkeletonPelvicLimb: "",
+			appendicularSkeletonPelvicLimbOptions: [],
+			appendicularSkeletonPelvis: [],
 			observations: ""
 		}
 	})
@@ -91,6 +88,18 @@ export default function ExamRequestPage() {
 			form.setValue("veterinarianUf", user.uf)
 		}
 	}, [user])
+
+	useEffect(() => {
+		if (form.watch("appendicularSkeletonThoracicLimb") === "") {
+			form.setValue("appendicularSkeletonThoracicLimbOptions", [])
+		}
+	}, [form.watch("appendicularSkeletonThoracicLimb")])
+
+	useEffect(() => {
+		if (form.watch("appendicularSkeletonPelvicLimb") === "") {
+			form.setValue("appendicularSkeletonPelvicLimbOptions", [])
+		}
+	}, [form.watch("appendicularSkeletonPelvicLimb")])
 
 	async function onSubmit(values: ExamRequest) {
 		setIsLoading(true)
@@ -123,7 +132,29 @@ export default function ExamRequestPage() {
 		setIsAlertOpen(false)
 		setCanCloseAlert(false)
 		setExamRequestSent(false)
-		form.reset()
+		form.reset({
+			veterinarianClinic: "",
+			veterinarianName: user && user.type === UserType.Veterinarian ? user.name : "",
+			veterinarianCrmv: user && user.type === UserType.Veterinarian ? user.crmv : "",
+			veterinarianUf: user && user.type === UserType.Veterinarian ? user.uf : "",
+			patientName: "",
+			patientSpecies: "",
+			patientSex: "",
+			patientAge: 0,
+			patientBreed: "",
+			patientTutor: "",
+			chip: "",
+			paymentMethod: "",
+			softTissues: [],
+			skullItems: [],
+			axialSkeletonItems: [],
+			appendicularSkeletonThoracicLimb: "",
+			appendicularSkeletonThoracicLimbOptions: [],
+			appendicularSkeletonPelvicLimb: "",
+			appendicularSkeletonPelvicLimbOptions: [],
+			appendicularSkeletonPelvis: [],
+			observations: ""
+		})
 	}
 
 	function handleDownload() {
@@ -212,7 +243,7 @@ export default function ExamRequestPage() {
 										<FormItem>
 											<FormLabel>CRMV do(a) Veterinário(a)</FormLabel>
 											<FormDescription>
-												Número de inscrição no Conselho Regional de Medicina Veterinária
+												Inscrição no Conselho Regional de Medicina Veterinária
 											</FormDescription>
 											<FormControl>
 												{user ? (
@@ -237,25 +268,15 @@ export default function ExamRequestPage() {
 											</FormDescription>
 											<FormControl>
 												{user ? (
-													<Select
+													<Combobox
+														className="w-full"
 														onValueChange={field.onChange}
-														defaultValue={user.type === UserType.Veterinarian ? user.uf : field.value}
+														value={user.type === UserType.Veterinarian ? user.uf : field.value}	
+														items={federativeUnits}
+														placeholder="Selecione uma UF"
+														searchPlaceholder="Pesquise por uma UF"
 														disabled={disableVeterinarianNameInput}
-													>
-														<SelectTrigger>
-															<SelectValue />
-														</SelectTrigger>
-														<SelectContent>
-															{federativeUnits.map(item => (
-																<SelectItem
-																	key={item.abbreviation}
-																	value={`${item.name} (${item.abbreviation})`}
-																>
-																	{item.name} ({item.abbreviation})
-																</SelectItem>
-															))}
-														</SelectContent>
-													</Select>
+													/>
 												) : (
 													<Skeleton className="h-[35px]" />
 												)}
@@ -268,7 +289,7 @@ export default function ExamRequestPage() {
 						</FormSection>
 
 						<FormSection title="Dados do Paciente">
-							<FormGrid cols={3}>
+							<FormGrid cols={4}>
 								<FormField
 									control={form.control}
 									name="patientName"
@@ -277,45 +298,6 @@ export default function ExamRequestPage() {
 											<FormLabel>Nome</FormLabel>
 											<FormControl>
 												<Input {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name="patientSpecies"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Espécie</FormLabel>
-											<FormControl>
-												<Input {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name="patientSex"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Sexo</FormLabel>
-											<FormControl>
-												<Select
-													onValueChange={field.onChange}
-													defaultValue={field.value}
-												>
-													<SelectTrigger>
-														<SelectValue placeholder="" />
-													</SelectTrigger>
-													<SelectContent>
-														<SelectItem value="Macho">Macho</SelectItem>
-														<SelectItem value="Fêmea">Fêmea</SelectItem>
-													</SelectContent>
-												</Select>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -363,18 +345,62 @@ export default function ExamRequestPage() {
 										</FormItem>
 									)}
 								/>
+
+<FormField
+									control={form.control}
+									name="patientSpecies"
+									render={() => (
+										<FormItem>
+											<FormLabel>Espécie</FormLabel>
+											<div className="grid grid-cols-1 gap-2 items-top">
+												{species.map(item => (
+													<CheckboxItem
+														key={item.id}
+														name="patientSpecies"
+														formControl={form.control}
+														option={item}
+														singleOption
+													/>
+												))}
+											</div>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name="patientSex"
+									render={() => (
+										<FormItem>
+											<FormLabel>Sexo</FormLabel>
+											<div className="grid grid-cols-1 gap-2 items-top">
+												{sexOptions.map(item => (
+													<CheckboxItem
+														key={item.id}
+														name="patientSex"
+														formControl={form.control}
+														option={item}
+														singleOption
+													/>
+												))}
+											</div>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 							</FormGrid>
 						</FormSection>
 
 						<FormSection title="Dados do Exame">
 							<FormField
 								control={form.control}
-								name="examSuspicion"
+								name="chip"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Suspeita</FormLabel>
+										<FormLabel>CHIP</FormLabel>
 										<FormControl>
-											<Textarea className="resize-none" rows={2} {...field} />
+											<Input {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -383,13 +409,21 @@ export default function ExamRequestPage() {
 
 							<FormField
 								control={form.control}
-								name="examComplementaryDone"
-								render={({ field }) => (
+								name="paymentMethod"
+								render={() => (
 									<FormItem>
-										<FormLabel>Exame complementar realizado</FormLabel>
-										<FormControl>
-											<Textarea className="resize-none" rows={2} {...field} />
-										</FormControl>
+										<FormLabel>Pagamento</FormLabel>
+										<div className="grid grid-cols-1 gap-2 items-top">
+											{paymentMethods.map(item => (
+												<CheckboxItem
+													key={item.id}
+													name="paymentMethod"
+													formControl={form.control}
+													option={item}
+													singleOption
+												/>
+											))}
+										</div>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -436,14 +470,133 @@ export default function ExamRequestPage() {
 												))}
 											</div>
 											<FormDescription>
-												*Exames com necessidade de sedação para melhor
+												<sup>*</sup>Exames com necessidade de sedação para melhor
 												posicionamento.
 											</FormDescription>
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
+							</FormGrid>
 
+							<FormGrid title="Esqueleto Apendicular" cols={3}>
+								<div className="flex flex-col gap-2">
+									<FormField
+										control={form.control}
+										name="appendicularSkeletonThoracicLimb"
+										render={() => (
+											<FormItem>
+												<FormLabel>Membro Torácico</FormLabel>
+												<div className="grid grid-cols-1 gap-2 items-top">
+													{appendicularSkeletonThoracicLimb.map(item => (
+														<CheckboxItem
+															key={item.id}
+															name="appendicularSkeletonThoracicLimb"
+															formControl={form.control}
+															option={item}
+															singleOption
+														/>
+													))}
+												</div>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
+									{form.watch("appendicularSkeletonThoracicLimb") !== "" && (
+										<FormField
+											control={form.control}
+											name="appendicularSkeletonThoracicLimbOptions"
+											render={() => (
+												<FormItem>
+													<FormLabel>Assinalar opção:</FormLabel>
+													<div className="grid grid-cols-2 gap-2 items-top">
+														{appendicularSkeletonThoracicLimbOptions.map(item => (
+															<CheckboxItem
+																key={item.id}
+																name="appendicularSkeletonThoracicLimbOptions"
+																formControl={form.control}
+																option={item}
+															/>
+														))}
+													</div>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									)}
+								</div>
+
+								<div className="flex flex-col gap-2">
+									<FormField
+										control={form.control}
+										name="appendicularSkeletonPelvicLimb"
+										render={() => (
+											<FormItem>
+												<FormLabel>Membro Pélvico</FormLabel>
+												<div className="grid grid-cols-1 gap-2 items-top">
+													{appendicularSkeletonPelvicLimb.map(item => (
+														<CheckboxItem
+															key={item.id}
+															name="appendicularSkeletonPelvicLimb"
+															formControl={form.control}
+															option={item}
+															singleOption
+														/>
+													))}
+												</div>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
+									{form.watch("appendicularSkeletonPelvicLimb") !== "" && (
+										<FormField
+											control={form.control}
+											name="appendicularSkeletonPelvicLimbOptions"
+											render={() => (
+												<FormItem>
+													<FormLabel>Assinalar opção:</FormLabel>
+													<div className="grid grid-cols-2 gap-2 items-top">
+														{appendicularSkeletonPelvicLimbOptions.map(item => (
+															<CheckboxItem
+																key={item.id}
+																name="appendicularSkeletonPelvicLimbOptions"
+																formControl={form.control}
+																option={item}
+															/>
+														))}
+													</div>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									)}
+								</div>
+
+								<FormField
+									control={form.control}
+									name="appendicularSkeletonPelvis"
+									render={() => (
+										<FormItem>
+											<FormLabel>Pelve</FormLabel>
+											<div className="grid grid-cols-1 gap-2 items-top">
+												{appendicularSkeletonPelvis.map(item => (
+													<CheckboxItem
+														key={item.id}
+														name="appendicularSkeletonPelvis"
+														formControl={form.control}
+														option={item}
+													/>
+												))}
+											</div>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</FormGrid>
+
+							<FormGrid cols={2}>
 								<FormField
 									control={form.control}
 									name="axialSkeletonItems"
@@ -460,54 +613,15 @@ export default function ExamRequestPage() {
 													/>
 												))}
 											</div>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name="appendicularSkeletonItems"
-									render={() => (
-										<FormItem>
-											<FormLabel>Esqueleto Apendicular</FormLabel>
-											<div className="grid grid-cols-1 gap-2 items-top">
-												{appendicularSkeletonItems.map(item => (
-														<CheckboxItem
-															key={item.id}
-															name="appendicularSkeletonItems"
-															formControl={form.control}
-															option={item}
-														/>
-													)
-												)}
-											</div>
+											<FormDescription>
+												<sup>*</sup>Exames com necessidade de sedação para melhor
+												posicionamento.
+											</FormDescription>
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
 							</FormGrid>
-
-							<FormField
-								control={form.control}
-								name="combos"
-								render={() => (
-									<FormItem>
-										<FormLabel>Combos</FormLabel>
-										<div className="grid grid-cols-1 gap-2 items-top">
-											{combos.map(item => (
-												<CheckboxItem
-													key={item.id}
-													name="combos"
-													formControl={form.control}
-													option={item}
-												/>
-											))}
-										</div>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
 
 							<FormField
 								control={form.control}
@@ -522,14 +636,9 @@ export default function ExamRequestPage() {
 									</FormItem>
 								)}
 							/>
-
-							<FormDescription className="text-center">
-								*Os exames de imagem devem ser correlacionados com a Clínica do paciente
-								e demais exames complementares.
-							</FormDescription>
 						</FormSection>
 
-						<div className="flex justify-end">
+						<div className="flex justify-center">
 							<Button type="submit" disabled={isLoading} className="px-14">
 								Enviar
 							</Button>

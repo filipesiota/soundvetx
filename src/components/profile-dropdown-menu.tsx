@@ -37,8 +37,7 @@ const ProfileDropdownMenu = React.forwardRef<HTMLDivElement, ProfileDropdownMenu
 	const { signOut } = useAuth()
 
 	const userTypeName = UserTypes.find((type) => type.value === user.type)?.label
-	const userUf = user.type === UserType.Veterinarian && getAbbreviationFromUf(user.uf)
-	const userLabel = user.type === UserType.Veterinarian ? `CRMV ${user.crmv}/${userUf}` : userTypeName
+	const userLabel = user.type === UserType.Veterinarian ? `CRMV ${user.crmv}/${user.uf}` : userTypeName
 
 	return (
 		<DropdownMenu>

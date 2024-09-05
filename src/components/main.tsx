@@ -11,7 +11,7 @@ const Main = React.forwardRef<HTMLDivElement, MainProps>(
 		return (
             <main
                 ref={ref}
-                className={cn("flex flex-col items-center w-full max-w-screen-xl mx-auto py-4 px-4", className)}
+                className={cn("flex flex-col items-center w-full max-w-screen-xl mx-auto py-4 px-4 pb-8", className)}
                 {...props}
             >
                 {children}

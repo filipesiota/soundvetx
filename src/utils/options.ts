@@ -1,20 +1,38 @@
 import { CheckboxOption } from "@/components/checkbox-item"
-import { FederativeUnit } from "@/types/federative-unit"
+import { ComboboxItem } from "@/components/combobox"
 import { UserType, UserTypeOption } from "@/types/user"
+
+export const species: CheckboxOption[] = [
+	{ id: "canine", label: "Canino" },
+	{ id: "feline", label: "Felino" },
+	{ id: "wild", label: "Silvestre" }
+]
+
+export const sexOptions: CheckboxOption[] = [
+	{ id: "male", label: "Macho" },
+	{ id: "female", label: "Fêmea" }
+]
+
+export const paymentMethods: CheckboxOption[] = [
+	{ id: "petLove", label: "Pet Love" },
+	{ id: "private", label: "Particular" }
+]
 
 export const softTissues: CheckboxOption[] = [
 	{ id: "chest", label: "Tórax" },
-	{ id: "abdomen", label: "Abdômen" }
+	{ id: "abdomen", label: "Abdômen" },
+	{ id: "skyline", label: "Skyline" },
 ]
 
 export const skullItems: CheckboxOption[] = [
-	{ id: "mandible", label: "Mandíbula" },
-	{ id: "jaw", label: "Maxilar" },
-	{ id: "tympanicBullae", label: "Bulas Timpânicas" }
+	{ id: "mandible", label: "Mandíbula", hasObservation: true },
+	{ id: "toothRoots", label: "Raízes dentárias", hasObservation: true },
+	{ id: "tympanicBullae", label: "Bulas Timpânicas", hasObservation: true },
+	{ id: "skullcap", label: "Calota craniana", hasObservation: true }
 ]
 
 export const axialSkeletonItems: CheckboxOption[] = [
-	{ id: "cervical", label: "Coluna Cervical" },
+	{ id: "cervical", label: "Coluna Cervical", hasObservation: true },
 	{ id: "thoracic", label: "Coluna Torácica" },
 	{ id: "lumbar", label: "Coluna Lombar" },
 	{ id: "cervicothoracic", label: "Cervico Torácica" },
@@ -23,50 +41,66 @@ export const axialSkeletonItems: CheckboxOption[] = [
 	{ id: "tail", label: "Cauda" }
 ]
 
-export const appendicularSkeletonItems: CheckboxOption[] = [
-	{ id: "rightThoracicLimb", label: "Membro Torácico Direito" },
-	{ id: "leftThoracicLimb", label: "Membro Torácico Esquerdo" },
-	{ id: "rightPelvicLimb", label: "Membro Pélvico Direito" },
-	{ id: "leftPelvicLimb", label: "Membro Pélvico Esquerdo" },
-	{ id: "postTraumaPelvis", label: 'Pelve "Pós-Trauma"' },
-	{ id: "dysplasiaControlPelvis", label: 'Pelve "Controle Displasia"' }
+export const appendicularSkeletonThoracicLimb: CheckboxOption[] = [
+	{ id: "right", label: "Direito" },
+	{ id: "left", label: "Esquerdo" }
 ]
 
-export const combos: CheckboxOption[] = [
-	{ id: "preSurgical", label: "Pré-cirúrgico (RX tórax e US abdominal)" },
-	{ id: "metastases", label: "Pesquisa de metástases (RX tórax e US abdominal)" },
-	{ id: "postTrauma", label: "Pós trauma (RX e US abdominal)" }
+export const appendicularSkeletonThoracicLimbOptions: CheckboxOption[] = [
+	{ id: "completeStudy", label: "Estudo Completo" },
+	{ id: "shoulder", label: "Ombro" },
+	{ id: "umerus", label: "Úmero" },
+	{ id: "elbow", label: "Cotovelo" },
+	{ id: "radio", label: "Rádio/Ulna" },
+	{ id: "carpus", label: "Carpo/Dígitos" },
 ]
 
-export const federativeUnits: FederativeUnit[] = [
-	{ name: "Acre", abbreviation: "AC" },
-	{ name: "Alagoas", abbreviation: "AL" },
-	{ name: "Amapá", abbreviation: "AP" },
-	{ name: "Amazonas", abbreviation: "AM" },
-	{ name: "Bahia", abbreviation: "BA" },
-	{ name: "Ceará", abbreviation: "CE" },
-	{ name: "Distrito Federal", abbreviation: "DF" },
-	{ name: "Espírito Santo", abbreviation: "ES" },
-	{ name: "Goiás", abbreviation: "GO" },
-	{ name: "Maranhão", abbreviation: "MA" },
-	{ name: "Mato Grosso", abbreviation: "MT" },
-	{ name: "Mato Grosso do Sul", abbreviation: "MS" },
-	{ name: "Minas Gerais", abbreviation: "MG" },
-	{ name: "Pará", abbreviation: "PA" },
-	{ name: "Paraíba", abbreviation: "PB" },
-	{ name: "Paraná", abbreviation: "PR" },
-	{ name: "Pernambuco", abbreviation: "PE" },
-	{ name: "Piauí", abbreviation: "PI" },
-	{ name: "Rio de Janeiro", abbreviation: "RJ" },
-	{ name: "Rio Grande do Norte", abbreviation: "RN" },
-	{ name: "Rio Grande do Sul", abbreviation: "RS" },
-	{ name: "Rondônia", abbreviation: "RO" },
-	{ name: "Roraima", abbreviation: "RR" },
-	{ name: "Santa Catarina", abbreviation: "SC" },
-	{ name: "São Paulo", abbreviation: "SP" },
-	{ name: "Sergipe", abbreviation: "SE" },
-	{ name: "Tocantins", abbreviation: "TO" }
+export const appendicularSkeletonPelvicLimb: CheckboxOption[] = [
+	{ id: "right", label: "Direito" },
+	{ id: "left", label: "Esquerdo" }
 ]
+
+export const appendicularSkeletonPelvicLimbOptions: CheckboxOption[] = [
+	{ id: "femur", label: "Fêmur" },
+	{ id: "knee", label: "Joelho" },
+	{ id: "tibia", label: "Tíbia/Fíbula" },
+	{ id: "tarsus", label: "Art. Tarsica/Dígitos" }
+]
+
+export const appendicularSkeletonPelvis: CheckboxOption[] = [
+	{ id: "VDLL", label: "VD + LL" },
+	{ id: "pelvisAndKnee", label: "Pelve + Joelho (TPLO)" }
+]
+
+export const federativeUnits: ComboboxItem[] = [
+	{ value: "AC", label: "AC" },
+	{ value: "AL", label: "AL" },
+	{ value: "AP", label: "AP" },
+	{ value: "AM", label: "AM" },
+	{ value: "BA", label: "BA" },
+	{ value: "CE", label: "CE" },
+	{ value: "DF", label: "DF" },
+	{ value: "ES", label: "ES" },
+	{ value: "GO", label: "GO" },
+	{ value: "MA", label: "MA" },
+	{ value: "MT", label: "MT" },
+	{ value: "MS", label: "MS" },
+	{ value: "MG", label: "MG" },
+	{ value: "PA", label: "PA" },
+	{ value: "PB", label: "PB" },
+	{ value: "PR", label: "PR" },
+	{ value: "PE", label: "PE" },
+	{ value: "PI", label: "PI" },
+	{ value: "RJ", label: "RJ" },
+	{ value: "RN", label: "RN" },
+	{ value: "RS", label: "RS" },
+	{ value: "RO", label: "RO" },
+	{ value: "RR", label: "RR" },
+	{ value: "SC", label: "SC" },
+	{ value: "SP", label: "SP" },
+	{ value: "SE", label: "SE" },
+	{ value: "TO", label: "TO" }
+];
 
 export const UserTypes: UserTypeOption[] = [
 	{ value: UserType.Admin, label: "Administrador" },

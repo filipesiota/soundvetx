@@ -6,17 +6,13 @@ import path from "path"
 import { ComboReturn } from "@/types/combo-return"
 import { RequestError } from "@/types/request"
 import { ExamRequest } from "@/schemas/exam-request-schema"
-import { getAbbreviationFromUf } from "@/utils/get-abbreviation-from-uf"
 
 function decorateTemplateContent(template: string, formData: ExamRequest): string {
-	const veterinarianUf = getAbbreviationFromUf(formData.veterinarianUf)
-
 	const examItems: string[] = Array().concat(
 		formData.softTissues ?? [],
 		formData.skullItems ?? [],
 		formData.axialSkeletonItems ?? [],
-		formData.appendicularSkeletonItems ?? [],
-		formData.combos ?? []
+		formData.appendicularSkeletonItems ?? []
 	)
 
 	const examItemsContent =
@@ -46,14 +42,13 @@ function decorateTemplateContent(template: string, formData: ExamRequest): strin
 
 	template = template.replaceAll("{{ veterinarianName }}", formData.veterinarianName)
 	template = template.replaceAll("{{ veterinarianCrmv }}", formData.veterinarianCrmv)
-	template = template.replaceAll("{{ veterinarianUf }}", veterinarianUf)
+	template = template.replaceAll("{{ veterinarianUf }}", formData.veterinarianUf)
 	template = template.replaceAll("{{ patientName }}", formData.patientName)
 	template = template.replaceAll("{{ patientSpecies }}", formData.patientSpecies)
 	template = template.replaceAll("{{ patientBreed }}", formData.patientBreed)
 	template = template.replaceAll("{{ patientSex }}", formData.patientSex)
 	template = template.replaceAll("{{ patientTutor }}", formData.patientTutor)
 	template = template.replaceAll("{{ examItems }}", examItemsContent)
-	template = template.replaceAll("{{ examSuspicion }}", formData.examSuspicion)
 	template = template.replaceAll("{{ observations }}", observationsContent)
 	template = template.replaceAll("{{ currentFullDate }}", currentFullDate)
 

@@ -9,16 +9,18 @@ import { Checkbox } from "@/components/ui/checkbox"
 export type CheckboxOption = {
 	id: string
 	label: string
+	hasObservation?: boolean
 }
 
 interface CheckboxItemProps extends React.HTMLAttributes<HTMLDivElement> {
 	name: string
 	formControl: Control<any, any>
 	option: CheckboxOption
+	singleOption?: boolean
 }
 
 const CheckboxItem = React.forwardRef<HTMLDivElement, CheckboxItemProps>(
-	({ className, name, formControl, option, ...props }, ref) => {
+	({ className, name, formControl, option, singleOption = false, ...props }, ref) => {
 		return (
 			<FormField
 				key={option.id}
@@ -38,22 +40,30 @@ const CheckboxItem = React.forwardRef<HTMLDivElement, CheckboxItemProps>(
 								<Checkbox
 									checked={field.value?.includes(option.label)}
 									onCheckedChange={checked => {
+										if (singleOption) {
+											if (field.value?.includes(option.label)) {
+												return field.onChange("")
+											}
+											
+											return field.onChange(option.label)
+										}
+
 										if (checked) {
 											return field.onChange([
 												...(field.value || []),
 												option.label
 											])
-										} else {
-											return field.onChange(
-												(field.value || []).filter(
-													(v: string) => v !== option.label
-												)
-											)
 										}
+
+										return field.onChange(
+											(field.value || []).filter(
+												(v: string) => v !== option.label
+											)
+										)
 									}}
 								/>
 							</FormControl>
-							<FormLabel className="leading-1 font-normal">{option.label}</FormLabel>
+							<FormLabel className="leading-1 font-normal">{option.label}{option.hasObservation && (<sup>*</sup>)}</FormLabel>
 						</FormItem>
 					)
 				}}
