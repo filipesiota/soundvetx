@@ -39,3 +39,8 @@ next-env.d.ts
 # environment variables
 .env
 .env.production
+
+# lockfiles
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
